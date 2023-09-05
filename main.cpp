@@ -1,28 +1,25 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 #include <cmath>
-#include <stdlib.h>
+#include <list>
 
-#include "source/vec3.h"
 #include "source/camera.h"
+#include "source/primitives/sphere.h"
 
 using namespace std;
 
 int WINDOW_WIDTH = 800; int WINDOW_HEIGHT = 600;
 SDL_Color BACKGROUND_COLOR = {100,100,100,255};
 
-void render_circle(SDL_Renderer * renderer, Camera camera){
+void render_circle(SDL_Renderer * renderer, Camera camera, std::list<Primitive*>& renderObjectsList){
     //instruções da tarefa
-    
-    double sphereRadius = 3;
-    Vec3 spherePosition = Vec3(0,0,-15);
 
     const int nLin = 60; const int nCol = 80;
     SDL_Color canvas[nLin][nCol];    
 
     double dx = camera.frameWidth/nCol;
     double dy = camera.frameHeight/nLin;
-    Ray raycast = Ray(camera.eye.position);
+    Ray raycast;// = Ray(camera.eye.position);
 
     srand (time(NULL));
     for (int l = 0; l < nLin; l++){
@@ -30,37 +27,19 @@ void render_circle(SDL_Renderer * renderer, Camera camera){
         
         for (int c = 0; c < nCol; c++){
             double xj = -camera.frameWidth/2 + dx/2 + c*dx;
-
-            raycast.pointTowards(Vec3(raycast.position.x + xj, raycast.position.y + yj, raycast.position.z -camera.frameDistance));
-            SDL_Color resultColor;// {0,0,0,0} is transparent
-
-            //test sphere
-            double fA = raycast.direction.length_squared(); // 1
-            double fB = 2 * (raycast.position - spherePosition).dot(raycast.direction);
-            double fC = (raycast.position - spherePosition).length_squared() - sphereRadius*sphereRadius;
-            double fD = fB*fB - 4*fA*fC; //delta
-
-            if (fD < 0) { //nao existem raizaes
-                resultColor = BACKGROUND_COLOR; //transparente
-            } else {
-                resultColor = {255, 0, 0, 255}; //vermelho
-                
-                double t;
-                //nao utilizado
-                if (fD == 0) { //raiz unica
-                    t = -fB/fA;
-                } else {
-                    double t1 = (-fB + sqrt(fD)) / (2*fA);
-                    double t2 = (-fB - sqrt(fD)) / (2*fA);
-
-                    t = abs(t1)<abs(t2) ? t1 : t2;
-                }
-                //resultColor.r -= round(t*4);
-            }
-
-            canvas[l][c] = resultColor;
             
-            //canvas[l][c] = {rand() % 256, rand() % 256, rand() % 256, 255};
+            SDL_Color resultColor = BACKGROUND_COLOR;
+            raycast = Ray(camera.eye.position);
+            raycast.pointTowards(raycast.position + Vec3(xj, yj,-camera.frameDistance));
+
+            for (auto &obj : renderObjectsList) {
+                
+                if (obj->intersect(raycast)) {
+                    resultColor = raycast.contact_color;
+                }
+            }
+            
+            canvas[l][c] = resultColor;
         }
     }
     // Render the matrix of colors as rectangles
@@ -86,15 +65,26 @@ int main(int argv, char** args)
     camera.frameDistance = 6;
                     //position   //direction
     camera.eye = Ray(Vec3(0,0,0), Vec3(0,0,-1));
+
+
+
+    Sphere sphere(Vec3(0,0,-15), 3);
+    sphere.color = {255, 255, 0, 255};
+
+    Sphere sphere2(Vec3(4,0,-22), 4);
+    sphere2.color = {255, 0, 0, 255};
+
+    std::list<Primitive*> renderObjectsList;
+    renderObjectsList.push_back(&sphere);
+    renderObjectsList.push_back(&sphere2);
+
     
-
-
     std::cout << "Hello World!\n";
 
     SDL_Init(SDL_INIT_EVERYTHING);
 
     SDL_Window *window = SDL_CreateWindow("Hello SDL!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     bool isRunning = true;
     SDL_Event event;
@@ -140,7 +130,7 @@ int main(int argv, char** args)
         //SDL_RenderFillRect(renderer, &rect);
 
         //draw stuff here
-        render_circle(renderer, camera);
+        render_circle(renderer, camera, renderObjectsList);
 
         SDL_RenderPresent(renderer);
     }

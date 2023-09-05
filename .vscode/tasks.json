@@ -9,6 +9,8 @@
                 "-g",
                 "${workspaceFolder}\\source\\*.cpp",
                 "${workspaceFolder}\\source\\*.h",
+                "${workspaceFolder}\\source\\primitives\\*.cpp",
+                "${workspaceFolder}\\source\\primitives\\*.h",
                 "${file}",
                 //"${workspaceFolder}\\*.h",
                 "-o",
