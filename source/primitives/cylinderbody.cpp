@@ -1,19 +1,23 @@
 #include <SDL2/SDL.h>
 #include <cmath>
-#include "sphere.h"
+#include "cylinderbody.h"
 
-Sphere::Sphere(){};
+CylinderBody::CylinderBody(){};
 
-Sphere::Sphere(Vec3 position_in, double radius_in) {
+CylinderBody::CylinderBody(Vec3 position_in, Vec3 direction_in, double radius_in, double height_in) {
     position = position_in;
+    direction = direction_in.normalized();
     radius = radius_in;
+    height = height_in;
 };
 
-bool Sphere::intersect(Ray& raycast) {
-    
-    double fA = raycast.direction.lengthSquared(); // 1
-    double fB = 2 * (raycast.position - position).dot(raycast.direction);
-    double fC = (raycast.position - position).lengthSquared() - radius*radius;
+bool CylinderBody::intersect(Ray& raycast) {
+    Vec3 v = (raycast.position - position) - direction * (direction.dot(raycast.position - position));
+    Vec3 w = raycast.direction - direction * (direction.dot(raycast.direction));
+
+    double fA = w.dot(w);
+    double fB = 2 * v.dot(w);
+    double fC =(v.dot(v) - radius*radius);
     double fD = fB*fB - 4*fA*fC; //delta
 
     double t;
@@ -37,8 +41,7 @@ bool Sphere::intersect(Ray& raycast) {
             }
         }
         //find contact position
-        //TODO: move to raycast class later
         if (raycast.update_t(t)) raycast.contact_color = color;
         return true;
-    }
-}
+    }   
+};

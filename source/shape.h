@@ -1,12 +1,12 @@
-#ifndef PRIMITIVE_H
-#define PRIMITIVE_H
+#ifndef SHAPE_H
+#define SHAPE_H
 
 #include "worldobject.h"
 #include "ray.h"
 
-class Primitive : public WorldObject {
+class Shape : public WorldObject {
     public:
-        Primitive();
+        Shape();
 
         virtual bool intersect(Ray& raycast) = 0; //abstract
 };

@@ -5,13 +5,16 @@
 
 #include "source/camera.h"
 #include "source/primitives/sphere.h"
+#include "source/primitives/plane.h"
+#include "source/primitives/disk.h"
+#include "source/primitives/cylinderbody.h"
 
 using namespace std;
 
 int WINDOW_WIDTH = 800; int WINDOW_HEIGHT = 600;
 SDL_Color BACKGROUND_COLOR = {100,100,100,255};
 
-void render_circle(SDL_Renderer * renderer, Camera camera, std::list<Primitive*>& renderObjectsList){
+void render_circle(SDL_Renderer * renderer, Camera camera, std::list<Shape*>& renderObjectsList){
     //instruções da tarefa
 
     const int nLin = 60; const int nCol = 80;
@@ -74,9 +77,21 @@ int main(int argv, char** args)
     Sphere sphere2(Vec3(4,0,-22), 4);
     sphere2.color = {255, 0, 0, 255};
 
-    std::list<Primitive*> renderObjectsList;
-    renderObjectsList.push_back(&sphere);
-    renderObjectsList.push_back(&sphere2);
+    Plane plane(Vec3(0,-10,0), Vec3(0,1,0));
+    plane.color = {200, 200, 200, 255};
+
+    Disk disk(Vec3(20,-10,-20), Vec3(-1,0,0), 20);
+    disk.color = {200, 200, 255, 255};
+
+    CylinderBody cyl(Vec3(-20, 0, 20), Vec3(0,0,-1), 12, 20);
+    cyl.color = {200, 255, 200, 255};
+
+    std::list<Shape*> renderObjectsList;
+    renderObjectsList.push_front(&sphere);
+    renderObjectsList.push_front(&sphere2);
+    renderObjectsList.push_front(&plane);
+    renderObjectsList.push_front(&disk);
+    renderObjectsList.push_front(&cyl);
 
     
     std::cout << "Hello World!\n";

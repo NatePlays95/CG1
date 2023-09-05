@@ -10,11 +10,13 @@ Ray::Ray(){};
 Ray::Ray(Vec3 position_in){
     this->position = position_in;
     this->direction = Vec3(0,0,-1); //apontando pra frente
+    this->contact_color = {0,0,0,0};
 };
 
 Ray::Ray(Vec3 position_in, Vec3 direction_in){
     this->position = position_in;
     this->direction = direction_in.normalized();
+    this->contact_color = {0,0,0,0};
 };
 
 void Ray::pointTowards(Vec3 target) {

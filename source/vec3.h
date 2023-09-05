@@ -13,7 +13,7 @@ class Vec3 {
         Vec3 operator * (const double& factor);
         Vec3 operator / (const double& factor);
 
-        double length_squared();
+        double lengthSquared();
         double length();
 
         Vec3 normalized();

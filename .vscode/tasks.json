@@ -7,10 +7,10 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
-                "${workspaceFolder}\\source\\*.cpp",
                 "${workspaceFolder}\\source\\*.h",
-                "${workspaceFolder}\\source\\primitives\\*.cpp",
+                "${workspaceFolder}\\source\\*.cpp",
                 "${workspaceFolder}\\source\\primitives\\*.h",
+                "${workspaceFolder}\\source\\primitives\\*.cpp",
                 "${file}",
                 //"${workspaceFolder}\\*.h",
                 "-o",

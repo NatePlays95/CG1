@@ -50,14 +50,12 @@ Vec3 Vec3::operator / (const double& factor) {
     return temp;
 }
 
-
-
-double Vec3::length_squared() { //to save on performance
+double Vec3::lengthSquared() { //to save on performance
     return x*x + y*y + z*z;
 }
 
 double Vec3::length() {
-    return sqrt(length_squared());
+    return sqrt(lengthSquared());
 }
 
 Vec3 Vec3::normalized() {
