@@ -7,7 +7,6 @@
 class Sphere : public Shape {
     public:
         double radius;
-        SDL_Color color;
 
         Sphere();
         Sphere(Vec3 position_in, double radius_in);

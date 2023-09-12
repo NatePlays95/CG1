@@ -11,9 +11,9 @@ Sphere::Sphere(Vec3 position_in, double radius_in) {
 
 bool Sphere::intersect(Ray& raycast) {
     
-    double fA = raycast.direction.lengthSquared(); // 1
+    double fA = raycast.direction.magSquared(); // 1
     double fB = 2 * (raycast.position - position).dot(raycast.direction);
-    double fC = (raycast.position - position).lengthSquared() - radius*radius;
+    double fC = (raycast.position - position).magSquared() - radius*radius;
     double fD = fB*fB - 4*fA*fC; //delta
 
     double t;
@@ -36,6 +36,7 @@ bool Sphere::intersect(Ray& raycast) {
                 else return false;
             }
         }
+
         //find contact position
         //TODO: move to raycast class later
         if (raycast.update_t(t)) raycast.contact_color = color;

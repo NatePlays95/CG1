@@ -11,6 +11,8 @@ class CompositeShape : public Shape {
         
         CompositeShape();
 
+        void addShape(Shape* shape);
+
         bool intersect(Ray& raycast);
 };
 

@@ -8,7 +8,6 @@ class Disk : public Shape {
     public:
         Vec3 normalDirection;
         double radius;
-        SDL_Color color;
 
         Disk();
         Disk(Vec3 position_in, Vec3 normal_in, double radius);

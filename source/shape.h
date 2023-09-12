@@ -6,6 +6,8 @@
 
 class Shape : public WorldObject {
     public:
+        SDL_Color color;
+
         Shape();
 
         virtual bool intersect(Ray& raycast) = 0; //abstract

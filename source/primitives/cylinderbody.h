@@ -9,7 +9,6 @@ class CylinderBody : public Shape {
         Vec3 direction;
         double radius;
         double height;
-        SDL_Color color;
 
         CylinderBody();
         CylinderBody(Vec3 position_in, Vec3 direction_in, double radius_in, double height_in);

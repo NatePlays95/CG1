@@ -8,6 +8,9 @@
 #include "source/primitives/plane.h"
 #include "source/primitives/disk.h"
 #include "source/primitives/cylinderbody.h"
+#include "source/primitives/cylinder.h"
+#include "source/primitives/conebody.h"
+#include "source/primitives/cone.h"
 
 using namespace std;
 
@@ -35,7 +38,7 @@ void render_circle(SDL_Renderer * renderer, Camera camera, std::list<Shape*>& re
             raycast = Ray(camera.eye.position);
             raycast.pointTowards(raycast.position + Vec3(xj, yj,-camera.frameDistance));
 
-            for (auto &obj : renderObjectsList) {
+            for (auto obj : renderObjectsList) {
                 
                 if (obj->intersect(raycast)) {
                     resultColor = raycast.contact_color;
@@ -71,27 +74,34 @@ int main(int argv, char** args)
 
 
 
-    Sphere sphere(Vec3(0,0,-15), 3);
-    sphere.color = {255, 255, 0, 255};
+    Sphere* sphere = new Sphere(Vec3(0,-2,-15), 3);
+    sphere->color = {255, 255, 0, 255};
 
-    Sphere sphere2(Vec3(4,0,-22), 4);
-    sphere2.color = {255, 0, 0, 255};
+    Sphere* sphere2 = new Sphere(Vec3(4,0,-22), 4);
+    sphere2->color = {255, 0, 0, 255};
 
-    Plane plane(Vec3(0,-10,0), Vec3(0,1,0));
-    plane.color = {200, 200, 200, 255};
+    Plane* plane = new Plane(Vec3(0,-10,0), Vec3(0,1,0));
+    plane->color = {200, 200, 200, 255};
 
-    Disk disk(Vec3(20,-10,-20), Vec3(-1,0,0), 20);
-    disk.color = {200, 200, 255, 255};
+    Disk* disk = new Disk(Vec3(20,-10,-20), Vec3(-1,0,0), 20);
+    disk->color = {200, 200, 255, 255};
 
-    CylinderBody cyl(Vec3(-20, 0, 20), Vec3(0,0,-1), 12, 20);
-    cyl.color = {200, 255, 200, 255};
+    Cylinder* cylinder = new Cylinder(Vec3(-20, 0, -20), Vec3(1,0,-1).normalized(), 10, 20);
+    (*cylinder).setColor({200,255,200,255});
+
+    //ConeBody* cone = new ConeBody(Vec3(4,-2,-22), Vec3(0,-1,0), 4, 8);
+    //cone->color = {255, 255, 100, 255};
+
+    Cone* cone = new Cone(Vec3(4,-2,-22), Vec3(0,-1,0), 4, 8);
+    cone->setColor({255, 255, 100, 255});
 
     std::list<Shape*> renderObjectsList;
-    renderObjectsList.push_front(&sphere);
-    renderObjectsList.push_front(&sphere2);
-    renderObjectsList.push_front(&plane);
-    renderObjectsList.push_front(&disk);
-    renderObjectsList.push_front(&cyl);
+    renderObjectsList.push_front(sphere);
+    renderObjectsList.push_front(sphere2);
+    renderObjectsList.push_front(plane);
+    renderObjectsList.push_front(disk);
+    renderObjectsList.push_front(cylinder);
+    renderObjectsList.push_front(cone);
 
     
     std::cout << "Hello World!\n";
