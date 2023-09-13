@@ -14,17 +14,12 @@ bool Disk::intersect(Ray& raycast) {
     
     double t;
 
-
     double denominator = raycast.direction.dot(normalDirection);
     if (denominator == 0) return false;
     t = (position - raycast.position).dot(normalDirection) / denominator;
 
     Vec3 contact_position = raycast.position + raycast.direction * t;
     if ((contact_position - position).magSquared() > radius*radius) return false;
-    
-    bool shouldUpdate = raycast.update_t(t);
-    if (shouldUpdate) {
-        raycast.contact_color = color;
-    }
-    return shouldUpdate;    
+
+    return raycast.updateT(t, normalDirection, color);
 };

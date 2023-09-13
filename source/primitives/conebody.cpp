@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include <cmath>
+#include <utility>
 #include "conebody.h"
 
 ConeBody::ConeBody(){};
@@ -25,36 +26,37 @@ bool ConeBody::intersect(Ray& raycast) {
     double fC =pow((v.dot(n)), 2) - v.dot(v)*cos2theta;
     double fD = fB*fB - fA*fC; //delta
 
+    
+    if (fD < 0) return false;
+
     double t;
-    if (fD < 0) { //nao existem raizes
-        return false;
-    } else { //existe pelo menos uma raiz => contato    
-        if (fD == 0) { //raiz unica
-            t = -fB/fA;
-        } else {
-            double t1 = (-fB + sqrt(fD)) / (fA);
-            double t2 = (-fB - sqrt(fD)) / (fA);
-            
-            if (t1 < t2) {
-                if (t1 >= 0) t = t1;
-                else if (t2 >= 0) t = t2;
-                else return false;
-            } else {
-                if (t2 >= 0) t = t2;
-                else if (t1 >= 0) t = t1;
-                else return false;
-            }
+    //existe pelo menos uma raiz => contato    
+    if (fD == 0) { //raiz unica
+        t = -fB/fA;
+    } else {
+        double t1 = (-fB + sqrt(fD)) / (fA);
+        double t2 = (-fB - sqrt(fD)) / (fA);
+        
+        if (t1 > t2) std::swap(t1, t2);
+
+        if (t1 < 0) {
+            t1 = t2; // if t0 is negative, let's use t1 instead
+            if (t1 < 0) return false; // both t0 and t1 are negative
         }
+        t = t1;
+    }
 
-        //test if bounded by height
-        Vec3 contactProjection = (position - raycast.position - raycast.direction*t).projectOnto(direction) + direction * height/2;
-        //too tall
-        if (contactProjection.magSquared() > height*height/4) return false;
-        //going past the cylinder's bottom base
-        // if (contactProjection.dot(direction) < 0) return false;
+    Vec3 contactPosition = raycast.position + raycast.direction*t;
 
-        //find contact position
-        if (raycast.update_t(t)) raycast.contact_color = color;
-        return true;
-    }   
+    Vec3 contactProjection = (position - contactPosition).projectOnto(direction);
+
+    if ((contactProjection + direction * height/2).magSquared() > height*height/4) return false;
+
+    Vec3 contactToVertex = position + direction*height - contactPosition;
+    Vec3 cross = (contactToVertex).cross(contactProjection - contactPosition);
+
+    Vec3 normal = ((contactToVertex).cross(cross)).normalized();
+
+    //find contact position
+    return raycast.updateT(t, normal, color);
 };

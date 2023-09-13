@@ -21,9 +21,9 @@ bool Plane::intersect(Ray& raycast) {
 
    
     // t = ((position.dot(direction) - raycast.position) / raycast.direction.dot(direction));
-    bool shouldUpdate = raycast.update_t(t);
-    if (shouldUpdate) {
-        raycast.contact_color = color;
-    }
-    return shouldUpdate;    
+    return raycast.updateT(t, normalDirection, color);
+    // if (shouldUpdate) {
+    //     raycast.contact_color = color;
+    // }
+    // return shouldUpdate;    
 };

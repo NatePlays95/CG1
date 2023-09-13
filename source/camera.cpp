@@ -3,4 +3,5 @@
 #include "vec3.h"
 
 Camera::Camera(){
+    //eye = new Ray();
 };

@@ -3,6 +3,7 @@
 
 #include <SDL2/SDL.h>
 #include <cmath>
+#include <limits>
 #include "vec3.h"
 
 class Ray{
@@ -14,12 +15,13 @@ class Ray{
         Vec3 contact_normal;
         SDL_Color contact_color;
 
-        Ray();
-        Ray(Vec3 position_in);
-        Ray(Vec3 position_in, Vec3 direction_in);
+        //Ray();
+        Ray(Vec3 position_in=Vec3(0,0,0), Vec3 direction_in=Vec3(0,0,-1));
+        //Ray(Vec3 position_in, Vec3 direction_in);
 
         void pointTowards(Vec3 target);
-        bool update_t(double new_t);
+        Vec3 contactPosition();
+        bool updateT(double new_t, Vec3 new_normal, SDL_Color new_color);
 };
 
 #endif

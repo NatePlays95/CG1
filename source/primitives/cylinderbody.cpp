@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include <cmath>
+#include <utility>
 #include "cylinderbody.h"
 
 CylinderBody::CylinderBody(){};
@@ -21,35 +22,32 @@ bool CylinderBody::intersect(Ray& raycast) {
     double fD = fB*fB - 4*fA*fC; //delta
 
     double t;
-    if (fD < 0) { //nao existem raizes
-        return false;
-    } else { //existe pelo menos uma raiz => contato    
-        if (fD == 0) { //raiz unica
-            t = -fB/fA;
-        } else {
-            double t1 = (-fB + sqrt(fD)) / (2*fA);
-            double t2 = (-fB - sqrt(fD)) / (2*fA);
-            
-            if (t1 < t2) {
-                if (t1 >= 0) t = t1;
-                else if (t2 >= 0) t = t2;
-                else return false;
-            } else {
-                if (t2 >= 0) t = t2;
-                else if (t1 >= 0) t = t1;
-                else return false;
-            }
+    if (fD < 0) return false;
+        
+     //existe pelo menos uma raiz => contato    
+    if (fD == 0) { //raiz unica
+        t = -fB/fA;
+    } else {
+        double t1 = (-fB + sqrt(fD)) / (2*fA);
+        double t2 = (-fB - sqrt(fD)) / (2*fA);
+        
+        if (t1 > t2) std::swap(t1, t2);
+
+        if (t1 < 0) {
+            t1 = t2; // if t0 is negative, let's use t1 instead
+            if (t1 < 0) return false; // both t0 and t1 are negative
         }
+        t = t1;
+    }
 
-        //test if bounded by height
-        Vec3 contactProjection = (position - raycast.position - raycast.direction*t).projectOnto(direction);
-        //too tall
-        if (contactProjection.magSquared() > height*height/4) return false;
-        //going past the cylinder's bottom base
-        // if (contactProjection.dot(direction) < 0) return false;
+    //test if bounded by height
+    Vec3 contactProjection = (position - raycast.position - raycast.direction*t).projectOnto(direction);
+    //too tall
+    if (contactProjection.magSquared() > height*height/4) return false;
+    //going past the cylinder's bottom base
+    // if (contactProjection.dot(direction) < 0) return false;
 
-        //find contact position
-        if (raycast.update_t(t)) raycast.contact_color = color;
-        return true;
-    }   
+    Vec3 normal = (raycast.position + raycast.direction*t - contactProjection).normalized();
+
+    return raycast.updateT(t, normal, color);
 };

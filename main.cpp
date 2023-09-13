@@ -4,20 +4,14 @@
 #include <list>
 
 #include "source/camera.h"
-#include "source/primitives/sphere.h"
-#include "source/primitives/plane.h"
-#include "source/primitives/disk.h"
-#include "source/primitives/cylinderbody.h"
-#include "source/primitives/cylinder.h"
-#include "source/primitives/conebody.h"
-#include "source/primitives/cone.h"
+#include "source/primitives.h"
 
 using namespace std;
 
 int WINDOW_WIDTH = 800; int WINDOW_HEIGHT = 600;
 SDL_Color BACKGROUND_COLOR = {100,100,100,255};
 
-void render_circle(SDL_Renderer * renderer, Camera camera, std::list<Shape*>& renderObjectsList){
+void render(SDL_Renderer * renderer, Camera camera, std::list<Shape*>& renderObjectsList){
     //instruções da tarefa
 
     const int nLin = 60; const int nCol = 80;
@@ -25,7 +19,7 @@ void render_circle(SDL_Renderer * renderer, Camera camera, std::list<Shape*>& re
 
     double dx = camera.frameWidth/nCol;
     double dy = camera.frameHeight/nLin;
-    Ray raycast;// = Ray(camera.eye.position);
+    //Ray raycast;// = Ray(camera.eye.position);
 
     srand (time(NULL));
     for (int l = 0; l < nLin; l++){
@@ -35,7 +29,7 @@ void render_circle(SDL_Renderer * renderer, Camera camera, std::list<Shape*>& re
             double xj = -camera.frameWidth/2 + dx/2 + c*dx;
             
             SDL_Color resultColor = BACKGROUND_COLOR;
-            raycast = Ray(camera.eye.position);
+            Ray raycast = Ray(camera.eye.position);
             raycast.pointTowards(raycast.position + Vec3(xj, yj,-camera.frameDistance));
 
             for (auto obj : renderObjectsList) {
@@ -155,7 +149,7 @@ int main(int argv, char** args)
         //SDL_RenderFillRect(renderer, &rect);
 
         //draw stuff here
-        render_circle(renderer, camera, renderObjectsList);
+        render(renderer, camera, renderObjectsList);
 
         SDL_RenderPresent(renderer);
     }
