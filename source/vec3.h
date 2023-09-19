@@ -1,6 +1,8 @@
 #ifndef VEC3_H
 #define VEC3_H
 
+#include <cmath>
+
 class Vec3 {
     public:
         double x; double y; double z;
@@ -18,8 +20,11 @@ class Vec3 {
         double mag();
 
         Vec3 normalized();
+        Vec3 floored();
+        Vec3 clampedPositive();
         double dot(const Vec3& with);
         Vec3 cross(const Vec3& with);
+        Vec3 a(const Vec3& with);
         Vec3 projectOnto(Vec3& base);
         Vec3 reflect(Vec3& normal);
 

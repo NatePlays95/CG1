@@ -2,13 +2,15 @@
     "tasks": [
         {
             "type": "cppbuild",
-            "label": "C/C++: g++.exe arquivo de build ativo",
+            "label": "C/C++: g++.exe build apenas do main.cpp",
             "command": "C:\\Program Files\\mingw-w64\\bin\\g++.exe",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
                 "${workspaceFolder}\\source\\*.h",
                 "${workspaceFolder}\\source\\*.cpp",
+                "${workspaceFolder}\\source\\lighting\\*.h",
+                "${workspaceFolder}\\source\\lighting\\*.cpp",
                 "${workspaceFolder}\\source\\primitives\\*.h",
                 "${workspaceFolder}\\source\\primitives\\*.cpp",
                 "${file}",
@@ -33,7 +35,35 @@
                 "isDefault": true
             },
             "detail": "Tarefa gerada pelo Depurador."
-        },
+        }, {
+            "type": "cppbuild",
+            "label": "C/C++: g++.exe arquivo de build ativo",
+            "command": "C:\\Program Files\\mingw-w64\\bin\\g++.exe",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "${fileDirname}\\main.cpp",
+                //"${workspaceFolder}\\*.h",
+                "-o",
+                "${fileDirname}\\${fileBasenameNoExtension}.exe",
+                "-I${workspaceFolder}\\include",
+                "-L${workspaceFolder}\\lib",
+                "-lmingw32",
+                "-lSDL2main",
+                "-lSDL2",
+                //"-mwindows" //previne output ao console
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        }
     ],
     "version": "2.0.0"
 }

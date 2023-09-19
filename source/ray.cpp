@@ -38,6 +38,7 @@ Vec3 Ray::contactPosition() {
     return position + direction*t;
 }
 
+//TODO: delete later
 bool Ray::updateT(double new_t, Vec3 new_normal, SDL_Color new_color) {
     if (new_t < 0) return false;
     if (new_t >= t) return false;
@@ -45,5 +46,15 @@ bool Ray::updateT(double new_t, Vec3 new_normal, SDL_Color new_color) {
     t = new_t;
     contact_normal = new_normal;
     contact_color = new_color;
+    return true;
+}
+
+bool Ray::updateT(double new_t, Vec3 new_normal, Material new_material) {
+    if (new_t < 0) return false;
+    if (new_t >= t) return false;
+
+    t = new_t;
+    contact_normal = new_normal;
+    contact_material = new_material;
     return true;
 }

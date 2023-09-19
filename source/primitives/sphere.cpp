@@ -40,5 +40,6 @@ bool Sphere::intersect(Ray& raycast) {
 
     //find contact position
     //TODO: move to raycast class later
-    return raycast.updateT(t, normal, color);
+    //return raycast.updateT(t, normal, color);
+    return raycast.updateT(t, normal, material);
 }

@@ -1,7 +1,7 @@
 #include <SDL2/SDL.h>
 #include "vec3.h"
 #include <iostream>
-#include <cmath>
+
 
 Vec3::Vec3(double x_in, double y_in, double z_in) {
     x = x_in;
@@ -70,6 +70,22 @@ Vec3 Vec3::normalized() {
     return temp;
 }
 
+Vec3 Vec3::floored() {
+    Vec3 temp = Vec3(0,0,0);
+    temp.x = floor(this->x);
+    temp.y = floor(this->y);
+    temp.z = floor(this->z);
+    return temp;
+}
+
+Vec3 Vec3::clampedPositive() {
+    Vec3 temp = Vec3(0,0,0);
+    temp.x = x < 0 ? 0 : x;
+    temp.y = y < 0 ? 0 : y;
+    temp.z = z < 0 ? 0 : z;
+    return temp;
+}
+
 double Vec3::dot(const Vec3& with) {
     return this->x*with.x + this->y*with.y + this->z*with.z;
 }
@@ -79,6 +95,14 @@ Vec3 Vec3::cross(const Vec3& with) {
     temp.x = this->y*with.z - this->z*with.y;
     temp.y = this->x*with.z - this->z*with.x;
     temp.z = this->x*with.y - this->y*with.x;
+    return temp;
+}
+
+Vec3 Vec3::a(const Vec3& with) {
+    Vec3 temp = Vec3(0,0,0);
+    temp.x *= x*with.x;
+    temp.y *= y*with.y;
+    temp.z *= z*with.z;
     return temp;
 }
 
