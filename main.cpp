@@ -17,6 +17,45 @@ Vec3 AMBIENT_LIGHT = Vec3(0.2,0.2,0.3);
 int NLIN = 60; int NCOL = 80;
 
 
+SDL_Color renderLightingStep(Ray& raycast, std::list<Light*>& renderLightsList) {
+    SDL_Color resultColor = {255,255,255,255};
+    Vec3 n = raycast.contact_normal;
+
+    Vec3 eyeIntensity = Vec3(0,0,0);
+    eyeIntensity = eyeIntensity + Vec3(AMBIENT_LIGHT);
+
+    for (auto light : renderLightsList) {
+        Vec3 l = (light->position - raycast.contactPosition()).normalized();
+        Vec3 i = light->intensity;
+        Vec3 matr = raycast.contact_material.roughness;
+        Vec3 mats = raycast.contact_material.specular;
+        
+        Vec3 difIAtK = Vec3(i.x*matr.x, i.y*matr.y, i.z*matr.z);
+        double difFactor = max(0.0, l.dot(n));
+        Vec3 diffuseIntensity = difIAtK * difFactor;
+        diffuseIntensity = diffuseIntensity.clampedPositive();
+
+        eyeIntensity = eyeIntensity + diffuseIntensity;
+
+
+        Vec3 specIAtK = Vec3(i.x*mats.x, i.y*mats.y, i.z*mats.z);
+        Vec3 r = l.reflect(n);
+        Vec3 v = raycast.direction;
+        double mExp = 100; //hardness
+        double specFactor = pow(max(0.0, r.dot(v)),mExp);
+        Vec3 specularIntensity = specIAtK * specFactor;
+        specularIntensity = specularIntensity.clampedPositive();
+
+        eyeIntensity = eyeIntensity + specularIntensity;
+    }
+
+    eyeIntensity = (eyeIntensity * 255).floored();
+    resultColor.r = clamp(eyeIntensity.x, 0.0, 255.0);
+    resultColor.g = clamp(eyeIntensity.y, 0.0, 255.0);
+    resultColor.b = clamp(eyeIntensity.z, 0.0, 255.0);
+    return resultColor;
+}
+
 void render(SDL_Renderer * renderer, Camera camera, std::list<Shape*>& renderObjectsList, std::list<Light*>& renderLightsList){
     //instruções da tarefa
 
@@ -47,41 +86,7 @@ void render(SDL_Renderer * renderer, Camera camera, std::list<Shape*>& renderObj
             }
 
             if (hitSomething) {
-                Vec3 n = raycast.contact_normal;
-
-                Vec3 eyeIntensity = Vec3(0,0,0);
-                eyeIntensity = eyeIntensity + Vec3(AMBIENT_LIGHT);
-
-                for (auto light : renderLightsList) {
-                    Vec3 l = (light->position - raycast.contactPosition()).normalized();
-                    Vec3 i = light->intensity;
-                    Vec3 matr = raycast.contact_material.roughness;
-                    Vec3 mats = raycast.contact_material.specular;
-                    
-                    Vec3 difIAtK = Vec3(i.x*matr.x, i.y*matr.y, i.z*matr.z);
-                    double difFactor = max(0.0, l.dot(n));
-                    Vec3 diffuseIntensity = difIAtK * difFactor;
-                    diffuseIntensity = diffuseIntensity.clampedPositive();
-
-                    eyeIntensity = eyeIntensity + diffuseIntensity;
-
-
-                    Vec3 specIAtK = Vec3(i.x*mats.x, i.y*mats.y, i.z*mats.z);
-                    Vec3 r = l.reflect(n);
-                    Vec3 v = raycast.direction;
-                    double mExp = 100; //hardness
-                    double specFactor = pow(max(0.0, r.dot(v)),mExp);
-                    Vec3 specularIntensity = specIAtK * specFactor;
-                    specularIntensity = specularIntensity.clampedPositive();
-
-                    eyeIntensity = eyeIntensity + specularIntensity;
-                }
-
-                eyeIntensity = (eyeIntensity * 255).floored();
-                resultColor.r = clamp(eyeIntensity.x, 0.0, 255.0);
-                resultColor.g = clamp(eyeIntensity.y, 0.0, 255.0);
-                resultColor.b = clamp(eyeIntensity.z, 0.0, 255.0);
-                double test = 1;
+                resultColor = renderLightingStep(raycast, renderLightsList);
             }
 
             canvas[l][c] = resultColor;
