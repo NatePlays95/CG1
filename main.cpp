@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <list>
 
+#include "source/mat4.h"
 #include "source/camera.h"
 #include "source/primitives.h"
 #include "source/lighting/pointlight.h"
@@ -59,7 +60,7 @@ SDL_Color renderLightingStep(Ray& raycast, std::list<Light*>& renderLightsList) 
 void render(SDL_Renderer * renderer, Camera camera, std::list<Shape*>& renderObjectsList, std::list<Light*>& renderLightsList){
     //instruções da tarefa
 
-    const int nLin = 600; const int nCol = 800;
+    const int nLin = 60; const int nCol = 80;
     SDL_Color canvas[nLin][nCol];    
 
     double dx = camera.frameWidth/nCol;
@@ -108,6 +109,15 @@ void render(SDL_Renderer * renderer, Camera camera, std::list<Shape*>& renderObj
 
 int main(int argv, char** args)
 {
+
+    Mat4 matI = Mat4::scaleMatrix(1,1,1);
+    Mat4 matRandom = Mat4();
+    matRandom.mat = {1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8};
+    Mat4 matTest = matRandom * matI;
+
+    Vec4 coords = Vec4(Vec3(2, 1.5, 0.5), 1);
+    Mat4 matScale = Mat4::scaleMatrix(2,1.5,0.5);
+    Vec4 scaledCoords = matScale * coords;
 
     Camera camera;
     camera.frameWidth = 8;
