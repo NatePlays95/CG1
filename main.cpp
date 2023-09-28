@@ -18,7 +18,7 @@ Vec3 AMBIENT_LIGHT = Vec3(0.2,0.2,0.3);
 int NLIN = 60; int NCOL = 80;
 
 
-SDL_Color renderLightingStep(Ray& raycast, std::list<Light*>& renderLightsList) {
+SDL_Color renderLightingStep(Ray& raycast, std::list<Shape*>& renderObjectsList, std::list<Light*>& renderLightsList) {
     SDL_Color resultColor = {255,255,255,255};
     Vec3 n = raycast.contact_normal;
 
@@ -26,10 +26,28 @@ SDL_Color renderLightingStep(Ray& raycast, std::list<Light*>& renderLightsList) 
     eyeIntensity = eyeIntensity + Vec3(AMBIENT_LIGHT);
 
     for (auto light : renderLightsList) {
+
         Vec3 l = (light->position - raycast.contactPosition()).normalized();
         Vec3 i = light->intensity;
         Vec3 matr = raycast.contact_material.roughness;
         Vec3 mats = raycast.contact_material.specular;
+
+        //test for shadows
+        Ray shadowRaycast = Ray(light->position, l * (-1));
+        bool raycastHit = false;
+        bool isShadow = false;
+        double renderContactDistance = (light->position - raycast.contactPosition()).mag();
+        for (auto obj : renderObjectsList) {
+            raycastHit = obj->intersect(shadowRaycast) || raycastHit;
+                
+            if (raycastHit && shadowRaycast.t < renderContactDistance - 0.00000001){ //sombra
+                isShadow = true;
+                break;
+            }
+        }
+        if (isShadow) {
+            break; //sai do loop das luzes
+        }
         
         Vec3 difIAtK = Vec3(i.x*matr.x, i.y*matr.y, i.z*matr.z);
         double difFactor = max(0.0, l.dot(n));
@@ -87,7 +105,7 @@ void render(SDL_Renderer * renderer, Camera camera, std::list<Shape*>& renderObj
             }
 
             if (hitSomething) {
-                resultColor = renderLightingStep(raycast, renderLightsList);
+                resultColor = renderLightingStep(raycast, renderObjectsList, renderLightsList);
             }
 
             canvas[l][c] = resultColor;
@@ -127,7 +145,7 @@ int main(int argv, char** args)
     camera.eye = Ray(Vec3(0,0,0), Vec3(0,0,-1));
 
 
-    PointLight* pointLight = new PointLight(Vec3(0, 50, 0), Vec3(0.7,0.7,0.7));
+    PointLight* pointLight = new PointLight(Vec3(20, 30, 0), Vec3(0.7,0.7,0.7));
     // PointLight* pointLight2 = new PointLight(Vec3(10, 20, 0), Vec3(1,1,1));
 
     std::list<Light*> renderLightsList;
@@ -146,8 +164,8 @@ int main(int argv, char** args)
     sphere2->color = {255, 0, 0, 255};
     sphere2->material = Material(Vec3(1,0.5,1), Vec3(0,0,0.5));
 
-    // Plane* plane = new Plane(Vec3(0,-10,0), Vec3(0,1,0));
-    // plane->color = {200, 200, 200, 255};
+    Plane* plane = new Plane(Vec3(0,-3,0), Vec3(0,1,0));
+    plane->material = Material(Vec3(0.5,0.5,0.5), Vec3(1,1,1));
 
     // Disk* disk = new Disk(Vec3(20,-10,-20), Vec3(-1,0,0), 20);
     // disk->color = {200, 200, 255, 255};
@@ -161,6 +179,7 @@ int main(int argv, char** args)
     std::list<Shape*> renderObjectsList;
     renderObjectsList.push_front(sphere);
     renderObjectsList.push_front(sphere2);
+    renderObjectsList.push_front(plane);
     // renderObjectsList.push_front(plane);
     // renderObjectsList.push_front(disk);
     // renderObjectsList.push_front(cylinder);

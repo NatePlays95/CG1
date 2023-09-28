@@ -21,7 +21,9 @@ bool Plane::intersect(Ray& raycast) {
 
    
     // t = ((position.dot(direction) - raycast.position) / raycast.direction.dot(direction));
-    return raycast.updateT(t, normalDirection, color);
+    Vec3 normal = this->normalDirection;
+
+    return raycast.updateT(t, this->normalDirection, material);
     // if (shouldUpdate) {
     //     raycast.contact_color = color;
     // }
