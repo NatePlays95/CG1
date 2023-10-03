@@ -1,4 +1,6 @@
 #include <SDL2/SDL.h>
+// #include <thread>
+// #include <chrono>
 #include <iostream>
 #include <cmath>
 #include <algorithm>
@@ -15,7 +17,7 @@ using namespace std;
 int WINDOW_WIDTH = 500; int WINDOW_HEIGHT = 500;
 SDL_Color BACKGROUND_COLOR = {100,100,100,255};
 // Vec3 AMBIENT_LIGHT = Vec3(0.2,0.2,0.3);
-Vec3 AMBIENT_LIGHT = Vec3(0.3,0.3,0.3);
+Vec3 AMBIENT_LIGHT = Vec3(0.1,0.1,0.2);
 
 
 
@@ -90,15 +92,23 @@ void render(SDL_Renderer * renderer, Camera camera, std::list<Shape*>& renderObj
 
     srand (time(NULL));
     for (int l = 0; l < nLin; l++){
-        double yj = camera.frameHeight/2 - dy/2 - l*dy;
+        double yj = -camera.frameHeight/2 + dy/2 + l*dy;
         
         for (int c = 0; c < nCol; c++){
             double xj = -camera.frameWidth/2 + dx/2 + c*dx;
             
+            Mat4 cameraToWorld = camera.cameraToWorldMatrix();
+
             SDL_Color resultColor = BACKGROUND_COLOR;
             bool hitSomething = false;
-            Ray raycast = Ray(camera.eye.position);
-            raycast.pointTowards(raycast.position + Vec3(xj, yj,-camera.frameDistance));
+            Ray raycast = Ray(camera.position);
+            
+            Vec3 targetScreenPos = camera.position;
+            targetScreenPos = targetScreenPos + camera.k * -camera.frameDistance;
+            targetScreenPos = targetScreenPos + camera.i * xj;
+            targetScreenPos = targetScreenPos + camera.j * yj;
+            
+            raycast.pointTowards(targetScreenPos);
 
             for (auto obj : renderObjectsList) {
                 if (obj->intersect(raycast)) {
@@ -124,8 +134,12 @@ void render(SDL_Renderer * renderer, Camera camera, std::list<Shape*>& renderObj
 
             SDL_Rect rect = {c * render_dx, l * render_dY, render_dx, render_dY};
             SDL_RenderFillRect(renderer, &rect);
+
+            // SDL_RenderPresent(renderer);
+            // std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     }
+    // int i = 1;
 };
 
 int main(int argv, char** args)
@@ -147,11 +161,10 @@ int main(int argv, char** args)
     camera.frameWidth = 60;
     camera.frameHeight = 60;
     camera.frameDistance = 30;
-                    //position   //direction
-    camera.eye = Ray(Vec3(0,0,-30), Vec3(0,0,-1));
+    camera.lookAt(Vec3(0,0,0), Vec3(0,0,-100), Vec3(0,1,0));
 
 
-    PointLight* pointLight = new PointLight(Vec3(0, 60, -30), Vec3(0.7,0.7,0.7));
+    PointLight* pointLight = new PointLight(Vec3(0, 60, -30), Vec3(0.9,0.9,0.9));
     // PointLight* pointLight2 = new PointLight(Vec3(10, 20, 0), Vec3(1,1,1));
 
     std::list<Light*> renderLightsList;
@@ -176,7 +189,6 @@ int main(int argv, char** args)
 
     // Cylinder* cylinder = new Cylinder(Vec3(-20, 0, -20), Vec3(1,0,-1).normalized(), 10, 20);
     // (*cylinder).setColor({200,255,200,255});
-
     // Cone* cone = new Cone(Vec3(4,-2,-22), Vec3(0,-1,0), 4, 8);
     // cone->setColor({255, 255, 100, 255});
 
@@ -216,17 +228,22 @@ int main(int argv, char** args)
                     case SDLK_ESCAPE:
                         isRunning = false;
                         break;
+                    
                     case SDLK_UP:
-                        camera.eye.position.z -= 0.5;
+                        camera.position.z -= 2;
+                        camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
                         break;
                     case SDLK_DOWN:
-                        camera.eye.position.z += 0.5;
+                        camera.position.z += 2;
+                        camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
                         break;
                     case SDLK_LEFT:
-                        camera.eye.position.x -= 0.5;
+                        camera.position.x -= 2;
+                        camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
                         break;
                     case SDLK_RIGHT:
-                        camera.eye.position.x += 0.5;
+                        camera.position.x += 2;
+                        camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
                         break;
 
                     // case SDLK_q:
