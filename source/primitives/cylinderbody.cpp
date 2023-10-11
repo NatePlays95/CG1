@@ -1,4 +1,3 @@
-#include <SDL2/SDL.h>
 #include <cmath>
 #include <utility>
 #include "cylinderbody.h"
@@ -49,5 +48,5 @@ bool CylinderBody::intersect(Ray& raycast) {
 
     Vec3 normal = (raycast.position + raycast.direction*t - contactProjection).normalized();
 
-    return raycast.updateT(t, normal, color);
+    return raycast.updateT(t, normal, material);
 };

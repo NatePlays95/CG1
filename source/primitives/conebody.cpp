@@ -1,4 +1,3 @@
-#include <SDL2/SDL.h>
 #include <cmath>
 #include <utility>
 #include "conebody.h"
@@ -58,5 +57,5 @@ bool ConeBody::intersect(Ray& raycast) {
     Vec3 normal = ((contactToVertex).cross(cross)).normalized();
 
     //find contact position
-    return raycast.updateT(t, normal, color);
+    return raycast.updateT(t, normal, material);
 };

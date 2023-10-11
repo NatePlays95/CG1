@@ -1,4 +1,3 @@
-#include <SDL2/SDL.h>
 #include "vec3.h"
 #include <iostream>
 

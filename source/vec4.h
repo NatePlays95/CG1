@@ -13,6 +13,8 @@ class Vec4 {
         Vec4(const Vec4& source);
         Vec4(const Vec3& source, double w_in=1);
 
+        Vec3 to3();
+
         Vec4 operator + (const Vec4& obj);
         Vec4 operator - (const Vec4& obj);
         Vec4 operator * (const double& factor);

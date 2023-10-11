@@ -1,4 +1,3 @@
-#include <SDL2/SDL.h>
 #include <cmath>
 #include "disk.h"
 
@@ -21,5 +20,5 @@ bool Disk::intersect(Ray& raycast) {
     Vec3 contact_position = raycast.position + raycast.direction * t;
     if ((contact_position - position).magSquared() > radius*radius) return false;
 
-    return raycast.updateT(t, normalDirection, color);
+    return raycast.updateT(t, normalDirection, material);
 };

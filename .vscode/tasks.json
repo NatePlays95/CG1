@@ -7,21 +7,26 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
-                "${workspaceFolder}\\source\\*.h",
+
                 "${workspaceFolder}\\source\\*.cpp",
-                "${workspaceFolder}\\source\\lighting\\*.h",
                 "${workspaceFolder}\\source\\lighting\\*.cpp",
-                "${workspaceFolder}\\source\\primitives\\*.h",
                 "${workspaceFolder}\\source\\primitives\\*.cpp",
+                "${workspaceFolder}\\source\\rendering\\*.cpp",
+
                 "${file}",
                 //"${workspaceFolder}\\*.h",
+
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe",
+                
                 "-I${workspaceFolder}\\include",
                 "-L${workspaceFolder}\\lib",
                 "-lmingw32",
                 "-lSDL2main",
                 "-lSDL2",
+                // "-O1",
+                // "-O2",
+                // "-O3",
                 //"-mwindows" //previne output ao console
             ],
             "options": {

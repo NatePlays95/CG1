@@ -1,4 +1,3 @@
-#include <SDL2/SDL.h>
 #include "cone.h"
 #include "disk.h"
 #include "conebody.h"

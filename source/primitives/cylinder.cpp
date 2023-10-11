@@ -1,4 +1,3 @@
-#include <SDL2/SDL.h>
 #include "cylinder.h"
 #include "disk.h"
 #include "cylinderbody.h"

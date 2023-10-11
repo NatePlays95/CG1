@@ -1,4 +1,3 @@
-#include <SDL2/SDL.h>
 #include "vec4.h"
 
 
@@ -23,6 +22,10 @@ Vec4::Vec4(const Vec3& source, double w_in) {
     y = source.y;
     z = source.z;
     w = w_in;
+};
+
+Vec3 Vec4::to3() {
+    return Vec3(x, y, z);
 };
 
 Vec4 Vec4::operator + (const Vec4& obj) {
