@@ -33,6 +33,8 @@ public:
     Vec4 operator * (const Vec4& vector);
     Mat4 operator * (Mat4& with);
 
+    // Mat4 transpose();
+
     double at(int line, int column);
     Mat4* set(int line, int column, double value);
     Mat4 setLine(int l, const Vec4& vector);

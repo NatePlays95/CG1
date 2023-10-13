@@ -68,10 +68,6 @@ Mat4 Mat4::operator * (Mat4& with) {
 }
 
 
-
-
-
-
 double Mat4::at(int l, int c) {
     return mat.at(c*4 + l);
 }
