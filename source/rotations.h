@@ -6,9 +6,9 @@
 
 class Rotations{
     public:
-        static std::array<double, 16> rotacaoX(double x);
-        static std::array<double, 16> rotacaoY(double x);
-        static std::array<double, 16> rotacaoZ(double x);
+        Mat4 rotationX(double x);
+        Mat4 rotationY(double x);
+        Mat4 rotationZ(double x);
 };
 
 #endif;
