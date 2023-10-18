@@ -87,20 +87,22 @@ void Scene::handleInput() {
         }
     }
 
+    int moveSpeed = 10;
+
     if (upPressed) {
-        camera.position.z -= 2;
+        camera.position.z -= moveSpeed;
         camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
     }
     if (downPressed) {
-        camera.position.z += 2;
+        camera.position.z += moveSpeed;
         camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
     }
     if (leftPressed) {
-        camera.position.x -= 2;
+        camera.position.x -= moveSpeed;
         camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
     }
     if (rightPressed) {
-        camera.position.x += 2;
+        camera.position.x += moveSpeed;
         camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
     }
 };
@@ -216,6 +218,8 @@ void Scene::drawCanvasToWindow(std::vector<std::vector<SDL_Color>> * canvas_in) 
 
             SDL_Rect rect = {c * render_dx, l * render_dY, render_dx, render_dY};
             SDL_RenderFillRect(renderer, &rect);
+
+            // SDL_RenderPresent(renderer);
         }
     }
 };

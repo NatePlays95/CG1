@@ -21,3 +21,9 @@ void Cone::setColor(SDL_Color color_in) {
         shape->color.a = color_in.a;
     }
 };
+
+void Cone::setMaterial(Material material_in) {
+    for (auto shape : shapes) {
+        shape->material = material_in;
+    }
+};

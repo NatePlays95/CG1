@@ -23,3 +23,9 @@ void Cylinder::setColor(SDL_Color color_in) {
         shape->color.a = color_in.a;
     }
 };
+
+void Cylinder::setMaterial(Material material_in) {
+    for (auto shape : shapes) {
+        shape->material = material_in;
+    }
+};

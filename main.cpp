@@ -23,7 +23,7 @@ int main(int argv, char** args)
     SDL_Window *window = SDL_CreateWindow("Hello SDL!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
     
     SDL_Color BACKGROUND_COLOR = {100,100,100,255};
-    Vec3 AMBIENT_LIGHT = Vec3(0.1,0.1,0.2);
+    Vec3 AMBIENT_LIGHT = Vec3(0.5,0.5,0.5);
 
     Camera camera;
     camera.frameWidth = 60;
@@ -38,7 +38,8 @@ int main(int argv, char** args)
     PointLight* pointLight = new PointLight(Vec3(0, 60, -30), Vec3(0.9,0.9,0.9)*5000);
     scene.addLight(pointLight);
 
-
+    Sphere* sphereLight = new Sphere(Vec3(0, 60, -30), 10);
+    sphereLight->material = Material(Vec3(1,0,0), Vec3(0.7,0.2,0.2), Vec3(0.7,0.2,0.2), 10);    
 
     Sphere* sphere3 = new Sphere(Vec3(0,0,-100), 40);
     sphere3->material = Material(Vec3(1,0,0), Vec3(0.7,0.2,0.2), Vec3(0.7,0.2,0.2), 10);
@@ -49,17 +50,24 @@ int main(int argv, char** args)
     Plane* wall = new Plane(Vec3(0,0,-200), Vec3(0,0,1));
     wall->material = Material(Vec3(0.3, 0.3, 0.7), Vec3(0.3, 0.3, 0.7), Vec3(0,0,0));
 
-    // Disk* disk = new Disk(Vec3(20,-10,-20), Vec3(-1,0,0), 20);
-    // disk->color = {200, 200, 255, 255};
+    //40/3.0
+    Cylinder* cylinder = new Cylinder(Vec3(0,0,-100), Vec3(-1,1,-1).normalized(), 40/3.0, 120);
+    cylinder->setMaterial(Material(Vec3(0.2, 0.3, 0.8),Vec3(0.2, 0.3, 0.8),Vec3(0.2, 0.3, 0.8)));
 
-    // Cylinder* cylinder = new Cylinder(Vec3(-20, 0, -20), Vec3(1,0,-1).normalized(), 10, 20);
-    // (*cylinder).setColor({200,255,200,255});
-    // Cone* cone = new Cone(Vec3(4,-2,-22), Vec3(0,-1,0), 4, 8);
-    // cone->setColor({255, 255, 100, 255});
+    Vec3 conePos = Vec3(0,0,-100) + Vec3(-1,1,-1).normalized()*60;
+    Cone* cone = new Cone(conePos, Vec3(-1,1,-1).normalized(), 60, 20);
+    cone->setMaterial(Material(Vec3(0.8, 0.3, 0.2),Vec3(0.8, 0.3, 0.2),Vec3(0.8, 0.3, 0.2)));
 
+    Cone* cone2 = new Cone(Vec3(40,-40,-100), Vec3(0,1,0).normalized(), 40, 80);
+    cone2->setMaterial(Material(Vec3(0.8, 0.3, 0.2),Vec3(0.8, 0.3, 0.2),Vec3(0.8, 0.3, 0.2)));
+
+    // scene.addShape(sphereLight);
     scene.addShape(sphere3);
     scene.addShape(ground);
     scene.addShape(wall);
+    scene.addShape(cylinder);
+    scene.addShape(cone);
+    // scene.addShape(cone2);
 
 
 

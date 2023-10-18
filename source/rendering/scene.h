@@ -26,7 +26,7 @@ class Scene{
         std::list<Light*> lightsList;
         std::list<Shape*> shapesList;
 
-        int canvasLines = 50; int canvasColumns = 50;
+        int canvasLines = 500; int canvasColumns = 500;
         std::vector<std::vector<SDL_Color>> canvas;
         
         bool isRunning = false;

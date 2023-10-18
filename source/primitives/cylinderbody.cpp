@@ -27,8 +27,8 @@ bool CylinderBody::intersect(Ray& raycast) {
     if (fD == 0) { //raiz unica
         t = -fB/fA;
     } else {
-        double t1 = (-fB + sqrt(fD)) / (2*fA);
-        double t2 = (-fB - sqrt(fD)) / (2*fA);
+        double t1 = (-fB + sqrt(fD)) / (2.0*fA);
+        double t2 = (-fB - sqrt(fD)) / (2.0*fA);
         
         if (t1 > t2) std::swap(t1, t2);
 
@@ -40,13 +40,15 @@ bool CylinderBody::intersect(Ray& raycast) {
     }
 
     //test if bounded by height
-    Vec3 contactProjection = (position - raycast.position - raycast.direction*t).projectOnto(direction);
+    Vec3 contactPosition = raycast.position + raycast.direction*t;
+    Vec3 contactProjectionLength = (contactPosition - position).projectOnto(direction);
     //too tall
-    if (contactProjection.magSquared() > height*height/4) return false;
+    if (contactProjectionLength.magSquared() > height*height/4.0) return false;
     //going past the cylinder's bottom base
     // if (contactProjection.dot(direction) < 0) return false;
 
-    Vec3 normal = (raycast.position + raycast.direction*t - contactProjection).normalized();
+    Vec3 contactProjectionPoint = position + contactProjectionLength;
+    Vec3 normal = (contactPosition - contactProjectionPoint).normalized();
 
     return raycast.updateT(t, normal, material);
 };

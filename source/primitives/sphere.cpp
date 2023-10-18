@@ -23,8 +23,8 @@ bool Sphere::intersect(Ray& raycast) {
     if (fD == 0) { //raiz unica
         t = -fB/fA;
     } else {
-        double t1 = (-fB + sqrt(fD)) / (2*fA);
-        double t2 = (-fB - sqrt(fD)) / (2*fA);
+        double t1 = (-fB + sqrt(fD)) / (2.0*fA);
+        double t2 = (-fB - sqrt(fD)) / (2.0*fA);
 
         if (t1 > t2) std::swap(t1, t2);
 

@@ -106,8 +106,10 @@ Vec3 Vec3::a(const Vec3& with) {
 }
 
 Vec3 Vec3::projectOnto(Vec3& base) {
-    double scalar = base.dot(*this) / base.dot(base);
-    return base * scalar;
+    return base * ((*this).dot(base) / base.magSquared());
+
+    // double scalar = base.dot(*this) / base.dot(base);
+    // return base * scalar;
 }
 
 Vec3 Vec3::reflect(Vec3& normal) {
