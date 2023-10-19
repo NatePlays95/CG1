@@ -54,5 +54,85 @@ Mat4 Rotations::screw(double x, double y, double z) {
     m.setColumn(1, Vec4( z,  0, -x, 0));
     m.setColumn(2, Vec4(-y,  x,  0, 0));
     m.setColumn(3, Vec4( 0,  0,  0, 1));
+
+    return m;
 }
+
+// m.setColumn(0, Vec4( 0, 0,  0, 0));
+//     m.setColumn(1, Vec4( 0,  0, 0, 0));
+//     m.setColumn(2, Vec4(0,  0,  0, 0));
+//     m.setColumn(3, Vec4( 0,  0,  0, 0));
+// return m;
+
+Mat4 Rotations::shearXY(double lambda) {
+    Mat4 m = Mat4();
+    m.setColumn(0, Vec4( 1,      0,  0, 0));
+    m.setColumn(1, Vec4( lambda, 1,  0, 0));
+    m.setColumn(2, Vec4( 0,      0,  1, 0));
+    m.setColumn(3, Vec4( 0,      0,  0, 1));
+
+    return m;
+}
+
+Mat4 Rotations::shearYX(double lambda) {
+    Mat4 m = Mat4();
+    m.setColumn(0, Vec4( 1, lambda,  0, 0));
+    m.setColumn(1, Vec4( 0,      1,  0, 0));
+    m.setColumn(2, Vec4( 0     , 0,  1, 0));
+    m.setColumn(3, Vec4( 0,      0,  0, 1));
+
+    return m;
+}
+
+Mat4 Rotations::shearXZ(double lambda) {
+    Mat4 m = Mat4();
+    m.setColumn(0, Vec4( 1,      0,  0, 0));
+    m.setColumn(1, Vec4( 0,      1,  0, 0));
+    m.setColumn(2, Vec4( lambda, 0,  1, 0));
+    m.setColumn(3, Vec4( 0,      0,  0, 1));
+
+    return m;
+}
+
+Mat4 Rotations::shearZX(double lambda) {
+    Mat4 m = Mat4();
+    m.setColumn(0, Vec4( 1, 0,  lambda, 0));
+    m.setColumn(1, Vec4( 0,      1,  0, 0));
+    m.setColumn(2, Vec4( 0,      0,  1, 0));
+    m.setColumn(3, Vec4( 0,      0,  0, 1));
+
+    return m;
+}
+
+Mat4 Rotations::shearYZ(double lambda) {
+    Mat4 m = Mat4();
+    m.setColumn(0, Vec4( 1, 0,  lambda, 0));
+    m.setColumn(1, Vec4( 0,      1,  0, 0));
+    m.setColumn(2, Vec4( 0,      0,  1, 0));
+    m.setColumn(3, Vec4( 0,      0,  0, 1));
+
+    return m;
+}
+
+Mat4 Rotations::shearYZ(double lambda) {
+    Mat4 m = Mat4();
+    m.setColumn(0, Vec4( 1,      0,  0, 0));
+    m.setColumn(1, Vec4( 0,      1,  0, 0));
+    m.setColumn(2, Vec4( 0, lambda,  1, 0));
+    m.setColumn(3, Vec4( 0,      0,  0, 1));
+
+    return m;
+}
+
+Mat4 Rotations::shearZY(double lambda) {
+    Mat4 m = Mat4();
+    m.setColumn(0, Vec4( 1, 0, 0, 0));
+    m.setColumn(1, Vec4( 0, 1,  lambda, 0));
+    m.setColumn(2, Vec4( 0, 0, 1, 0));
+    m.setColumn(3, Vec4( 0, 0, 0, 1));
+
+    return m;
+}
+
+
 
