@@ -58,12 +58,6 @@ Mat4 Rotations::screw(double x, double y, double z) {
     return m;
 }
 
-// m.setColumn(0, Vec4( 0, 0,  0, 0));
-//     m.setColumn(1, Vec4( 0,  0, 0, 0));
-//     m.setColumn(2, Vec4(0,  0,  0, 0));
-//     m.setColumn(3, Vec4( 0,  0,  0, 0));
-// return m;
-
 Mat4 Rotations::shearXY(double lambda) {
     Mat4 m = Mat4();
     m.setColumn(0, Vec4( 1,      0,  0, 0));
