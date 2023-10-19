@@ -21,6 +21,7 @@ class Camera{
         Mat4 lookAt(Vec3 eye, Vec3 at, Vec3 up_direction);
         Mat4 lookAt(Vec3 at);
         Mat4 cameraToWorldMatrix();
+        Mat4 worldToCameraMatrix();
 
 };
 

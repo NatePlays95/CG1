@@ -4,8 +4,6 @@ Camera::Camera(){
     //eye = new Ray();
 };
 
-
-
 Mat4 Camera::lookAt(Vec3 eye, Vec3 at, Vec3 up_direction) {
     position = eye;
     target = at;
@@ -19,6 +17,14 @@ Mat4 Camera::lookAt(Vec3 eye, Vec3 at, Vec3 up_direction) {
     J = (K.cross(I)).normalized();
 
     i = I; j = J; k = K;
+
+    //explanation:
+    // Vec3 forward, up, right;
+    // forward = (eye - at).normalized();
+    // right = (up_direction.cross(forward)).normalized();
+    // up = (forward.cross(right)).normalized();
+    // i = right; j = up; k = forward;
+
     return this->cameraToWorldMatrix();
 };
 
@@ -38,4 +44,18 @@ Mat4 Camera::cameraToWorldMatrix() {
     m.setColumn(3, Vec4(a, b, c, 1));
 
     return m;
-}
+};
+
+Mat4 Camera::worldToCameraMatrix() {
+    Mat4 m = Mat4();
+    double a = i.dot(position) * -1;
+    double b = j.dot(position) * -1;
+    double c = k.dot(position) * -1;
+
+    m.setLine(0, Vec4(i, a));
+    m.setLine(1, Vec4(j, b));
+    m.setLine(2, Vec4(k, c));
+    m.setLine(3, Vec4(0,0,0,1));
+
+    return m;
+};

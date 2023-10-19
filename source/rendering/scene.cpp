@@ -109,19 +109,19 @@ void Scene::handleInput() {
     int moveSpeed = 10;
 
     if (upPressed) {
-        camera.position.z -= moveSpeed;
+        camera.target.z -= moveSpeed;
         camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
     }
     if (downPressed) {
-        camera.position.z += moveSpeed;
+        camera.target.z += moveSpeed;
         camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
     }
     if (leftPressed) {
-        camera.position.x -= moveSpeed;
+        camera.target.x -= moveSpeed;
         camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
     }
     if (rightPressed) {
-        camera.position.x += moveSpeed;
+        camera.target.x += moveSpeed;
         camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
     }
 };
@@ -129,7 +129,7 @@ void Scene::handleInput() {
 
 //placeholder, moving the camera around
 void Scene::updateCameraRotation(int mouseX, int mouseY) {
-    double mouseSensitivity = 0.1;
+    double mouseSensitivity = 0.3;
  
     double deltaX = mouseX-mouseLastX;
     double deltaY = mouseY-mouseLastY; 
@@ -164,6 +164,7 @@ void Scene::render() {
 void Scene::paintCanvas(std::vector<std::vector<SDL_Color>> * canvas_in) {
     double dx = camera.frameWidth / canvasColumns;
     double dy = camera.frameHeight / canvasLines;
+    Mat4 cameraToWorld = camera.cameraToWorldMatrix();
 
     for (int l = 0; l < canvasLines; l++){
         double yj = -camera.frameHeight/2 + dy/2 + l*dy;
@@ -171,17 +172,19 @@ void Scene::paintCanvas(std::vector<std::vector<SDL_Color>> * canvas_in) {
         for (int c = 0; c < canvasColumns; c++){
             double xj = -camera.frameWidth/2 + dx/2 + c*dx;
             
-            Mat4 cameraToWorld = camera.cameraToWorldMatrix();
+            
 
             SDL_Color resultColor;// = backgroundColor;
             bool hitSomething = false;
             Ray raycast = Ray(camera.position);
             
             //TODO: swap to using matrices.
-            Vec3 targetScreenPos = camera.position;
-            targetScreenPos = targetScreenPos + camera.k * -camera.frameDistance;
-            targetScreenPos = targetScreenPos + camera.i * xj;
-            targetScreenPos = targetScreenPos + camera.j * yj;
+            // Vec3 targetScreenPos = camera.position;
+            // targetScreenPos = targetScreenPos + camera.k * -camera.frameDistance;
+            // targetScreenPos = targetScreenPos + camera.i * xj;
+            // targetScreenPos = targetScreenPos + camera.j * yj;
+            Vec3 targetScreenPos = Vec3(xj,yj,-camera.frameDistance);
+            targetScreenPos = (cameraToWorld * targetScreenPos).to3();
             
             raycast.pointTowards(targetScreenPos);
 
