@@ -14,13 +14,17 @@ Scene::Scene(SDL_Window * window_in, Camera * camera_in, SDL_Color background_in
     camera = *camera_in;
 
     window = window_in;
+
     initialize();
 };
 
 void Scene::initialize() {
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if (!renderer) {}
-
+    
+    SDL_GetRendererOutputSize(renderer, &mouseLastX, &mouseLastY);
+    mouseLastX /= 2; mouseLastY /= 2;
+    
     //
 };
 
@@ -45,7 +49,24 @@ void Scene::handleInput() {
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT) {
             isRunning = false;
+        } 
+
+        //mouse
+        else if (event.type == SDL_MOUSEBUTTONDOWN) {
+            mouseLeftPressed = true;
+            mouseLastX = event.button.x; mouseLastY = event.button.y;
         }
+        else if (event.type == SDL_MOUSEBUTTONUP) {
+            mouseLeftPressed = false;
+        }
+
+        else if (event.type == SDL_MOUSEMOTION) {
+            // Update camera rotation based on mouse movement
+            if (mouseLeftPressed) {
+                updateCameraRotation(event.motion.x, event.motion.y);
+            }
+        } 
+        
         else if (event.type == SDL_KEYDOWN) {
             SDL_Keycode keyPressed = event.key.keysym.sym;
             switch (keyPressed) {
@@ -65,7 +86,8 @@ void Scene::handleInput() {
                     rightPressed = true;
                     break;
             }
-        } else if (event.type == SDL_KEYUP) {
+        } 
+        else if (event.type == SDL_KEYUP) {
             SDL_Keycode keyReleased = event.key.keysym.sym;
             switch (keyReleased) {
                 case SDLK_UP:
@@ -81,9 +103,6 @@ void Scene::handleInput() {
                     rightPressed = false;
                     break;
             }
-        }
-        else if (event.type == SDL_MOUSEBUTTONDOWN) {
-            // Handle mouse button click event
         }
     }
 
@@ -106,6 +125,21 @@ void Scene::handleInput() {
         camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
     }
 };
+
+
+//placeholder, moving the camera around
+void Scene::updateCameraRotation(int mouseX, int mouseY) {
+    double mouseSensitivity = 0.1;
+ 
+    double deltaX = mouseX-mouseLastX;
+    double deltaY = mouseY-mouseLastY; 
+
+    Vec3 moveVec = Vec3(-deltaX, deltaY, 0.0)*mouseSensitivity; //should we multiply with cameraToWorld?
+    camera.lookAt(camera.position+moveVec, camera.target+moveVec, Vec3(0,1,0));
+
+    mouseLastX = mouseX; mouseLastY = mouseY;
+};
+
 
 
 void Scene::render() {

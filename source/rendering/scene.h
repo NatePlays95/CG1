@@ -26,10 +26,16 @@ class Scene{
         std::list<Light*> lightsList;
         std::list<Shape*> shapesList;
 
-        int canvasLines = 500; int canvasColumns = 500;
+        int canvasLines = 100; int canvasColumns = 100;
         std::vector<std::vector<SDL_Color>> canvas;
         
         bool isRunning = false;
+
+
+        int mouseLastX = 0;
+        int mouseLastY = 0;
+        bool mouseLeftPressed = false;
+
 
         bool upPressed = false;
         bool downPressed = false;
@@ -43,6 +49,7 @@ class Scene{
         int run();
 
         void handleInput();
+        void updateCameraRotation(int mouseX, int mouseY);
 
         void render();
         void paintCanvas(std::vector<std::vector<SDL_Color>> * canvas_in);
