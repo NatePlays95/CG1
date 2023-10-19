@@ -109,11 +109,11 @@ void Scene::handleInput() {
     int moveSpeed = 10;
 
     if (upPressed) {
-        camera.target.z -= moveSpeed;
+        camera.target.y -= moveSpeed;
         camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
     }
     if (downPressed) {
-        camera.target.z += moveSpeed;
+        camera.target.y += moveSpeed;
         camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
     }
     if (leftPressed) {

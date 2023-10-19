@@ -11,6 +11,7 @@
 #include "source/primitives.h"
 #include "source/lighting/pointlight.h"
 #include "source/rendering/scene.h"
+#include "source/mesh/mesh.h"
 
 using namespace std;
 
@@ -18,6 +19,8 @@ int WINDOW_WIDTH = 500; int WINDOW_HEIGHT = 500;
 
 int main(int argv, char** args)
 {
+
+    Mesh objCube = Mesh::loadFromFileObj("cube");
 
     SDL_Init(SDL_INIT_EVERYTHING);
     SDL_Window *window = SDL_CreateWindow("Hello SDL!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);

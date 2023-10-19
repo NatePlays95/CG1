@@ -53,7 +53,7 @@ Vec4 Mat4::operator * (const Vec4& v) {
     return temp;
 }
 
-Mat4 Mat4::operator * (Mat4& with) {
+Mat4 Mat4::operator * (Mat4 with) {
     Mat4 temp = Mat4();
     for (int c = 0; c < 4; c++){
     for (int l = 0; l < 4; l++){
@@ -66,6 +66,20 @@ Mat4 Mat4::operator * (Mat4& with) {
     }
     return temp;
 }
+
+// Mat4 Mat4::operator * (Mat4& with) {
+//     Mat4 temp = Mat4();
+//     for (int c = 0; c < 4; c++){
+//     for (int l = 0; l < 4; l++){
+//         double sum = 0;
+//         for (int i = 0; i < 4; i++) {
+//             sum += at(l, i) * with.at(i, c);
+//         }
+//         temp.set(l, c, sum);
+//     }
+//     }
+//     return temp;
+// }
 
 
 

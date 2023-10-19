@@ -31,7 +31,8 @@ public:
     Mat4 operator / (double factor);
 
     Vec4 operator * (const Vec4& vector);
-    Mat4 operator * (Mat4& with);
+    Mat4 operator * (Mat4 with);
+    // Mat4 operator * (Mat4& with);
 
     double at(int line, int column);
     Mat4* set(int line, int column, double value);
