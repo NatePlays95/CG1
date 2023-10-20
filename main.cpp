@@ -20,10 +20,12 @@ int WINDOW_WIDTH = 500; int WINDOW_HEIGHT = 500;
 
 int main(int argv, char** args)
 {
-
-    //Mesh objCube = Mesh::loadFromFileObj("cube");
-
     SDL_Init(SDL_INIT_EVERYTHING);
+    int imgFlags = IMG_INIT_PNG;  // Initialize support for PNG images (or other formats).
+    if ((IMG_Init(imgFlags) & imgFlags) != imgFlags) {
+        // Handle SDL_image initialization error.
+    }
+
     SDL_Window *window = SDL_CreateWindow("Hello SDL!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     SDL_Color BACKGROUND_COLOR = {100,100,100,255};
@@ -42,8 +44,8 @@ int main(int argv, char** args)
 
     PointLight* pointLight = new PointLight(Vec3(0, 60, -30), Vec3(0.9,0.9,0.9)*5000);
     scene.addLight(pointLight);
-    PointLight* pointLight2 = new PointLight(Vec3(0, 60, -100), Vec3(0.9,0.9,0.4)*1000);
-    scene.addLight(pointLight2);
+    // PointLight* pointLight2 = new PointLight(Vec3(0, 60, -100), Vec3(0.9,0.9,0.4)*1000);
+    // scene.addLight(pointLight2);
 
     Sphere* sphereLight = new Sphere(Vec3(0, 60, -30), 10);
     sphereLight->material = Material(Vec3(1,0,0), Vec3(0.7,0.2,0.2), Vec3(0.7,0.2,0.2), 10);    
@@ -66,36 +68,38 @@ int main(int argv, char** args)
     cone->setMaterial(Material(Vec3(0.8, 0.3, 0.2),Vec3(0.8, 0.3, 0.2),Vec3(0.8, 0.3, 0.2)));
 
     Cone* cone2 = new Cone(Vec3(40,-40,-100), Vec3(0,1,0).normalized(), 40, 80);
-    cone2->setMaterial(Material(Vec3(0.8, 0.3, 0.2),Vec3(0.8, 0.3, 0.2),Vec3(0.8, 0.3, 0.2)));
+    cone2->setMaterial(Material(Vec3(0.2, 0.2, 0.2),Vec3(1, 1, 1),Vec3(0.3, 0.3, 0.3), 10));
 
     WrappedMesh* objCube = new WrappedMesh();
     objCube->loadFromFileObj("cube");
     objCube->applyTransform(Transformations::scale(20,20,20));
     objCube->applyTransform(Transformations::translate(0,0,-100));
-    objCube->material = Material(Vec3(0.2, 0.7, 0.2), Vec3(0.2, 0.7, 0.2), Vec3(0,0,0));
-    // Load a BMP image
-    SDL_Surface* imageSurface = SDL_LoadBMP("assets/textures/dirt.bmp");
-    if (!imageSurface) {
-        SDL_Log("Failed to load image: %s", SDL_GetError());
-    } else {  // Create a texture from the image surface
-        SDL_Texture * texDirt = SDL_CreateTextureFromSurface(renderer, imageSurface);
-        objCube->material.texture = texDirt;
-    }
+    objCube->material = Material(Vec3(0.2, 0.2, 0.2),Vec3(1, 1, 1),Vec3(0.3, 0.3, 0.3), 10);
+    Texture* texDirt = new Texture("dirt");
+    objCube->material.texture = texDirt;
+
+    // WrappedMesh* objCar = new WrappedMesh();
+    // objCar->loadFromFileObj("s15");
+    // objCar->applyTransform(Transformations::scale(20,20,20));
+    // objCar->applyTransform(Transformations::translate(20,-20, 0));
+    // objCar->material = Material(Vec3(0.2, 0.2, 0.2),Vec3(1, 1, 1),Vec3(0.3, 0.3, 0.3), 10);
+    // Texture* texCar = new Texture("s15_base_color");
+    // objCar->material.texture = texCar;
     
-    WrappedMesh* objCube2 = new WrappedMesh();
-    objCube2->loadFromFileObj("cube");
-    objCube2->applyTransform(Transformations::scale(10,10,10));
-    objCube2->applyTransform(Transformations::translate(0,20,-110));
-    objCube2->material = Material(Vec3(0.2, 0.3, 0.8),Vec3(0.2, 0.3, 0.8),Vec3(0.2, 0.3, 0.8));
+    // WrappedMesh* objCube2 = new WrappedMesh();
+    // objCube2->loadFromFileObj("cube");
+    // objCube2->applyTransform(Transformations::scale(5,50,5));
+    // objCube2->applyTransform(Transformations::translate(0,20,-110));
+    // objCube2->material = Material(Vec3(0.2, 0.3, 0.8),Vec3(0.2, 0.3, 0.8),Vec3(0.2, 0.3, 0.8));
     
     // scene.addShape(sphereLight);
     // scene.addShape(sphere3);
     scene.addShape(ground);
     scene.addShape(wall);
     scene.addShape(objCube);
-    scene.addShape(objCube2);
+    // scene.addShape(objCar);
     // scene.addShape(cylinder);
-    scene.addShape(cone);
+    // scene.addShape(cone);
     // scene.addShape(cone2);
 
     scene.run();

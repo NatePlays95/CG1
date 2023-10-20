@@ -55,7 +55,7 @@ bool Mesh::intersectFace(Face& face, Ray& raycast) {
     Vec3 vt1 = *(uvs[face.uvIndices[0]]);
     Vec3 vt2 = *(uvs[face.uvIndices[1]]);
     Vec3 vt3 = *(uvs[face.uvIndices[2]]);
-    Vec3 uv = vt1*c1 + vt2*c2 + vt3*c3;
+    Vec3 uv = vt1*c3 + vt2*c1 + vt3*c2;
     
 
     Vec3 normal = plane_normal; //TODO: interpolate normals
