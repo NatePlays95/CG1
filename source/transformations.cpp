@@ -30,10 +30,10 @@ Mat4 Transformations::rotateZ(double angle) {
 
 Mat4 Transformations::translate(double x, double y, double z) {
     Mat4 m = Mat4();
-    m.setColumn(0, Vec4(1, 0, 0, x));
-    m.setColumn(1, Vec4(0, 1, 0, y));
-    m.setColumn(2, Vec4(0, 0, 1, z));
-    m.setColumn(3, Vec4(0, 0, 0, 1));
+    m.setLine(0, Vec4(1, 0, 0, x));
+    m.setLine(1, Vec4(0, 1, 0, y));
+    m.setLine(2, Vec4(0, 0, 1, z));
+    m.setLine(3, Vec4(0, 0, 0, 1));
 
     return m;
 };

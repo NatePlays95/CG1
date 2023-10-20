@@ -9,7 +9,7 @@ class Vec3 {
 
         // Vec3();
         Vec3(double x_in=0, double y_in=0, double z_in=0);
-        Vec3(Vec3& source);
+        Vec3(const Vec3& other);
 
         Vec3 operator + (const Vec3& obj);
         Vec3 operator - (const Vec3& obj);

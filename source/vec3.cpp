@@ -8,8 +8,8 @@ Vec3::Vec3(double x_in, double y_in, double z_in) {
     z = z_in;
 };
 
-//copy constructor
-Vec3::Vec3(Vec3& source) {
+// //copy constructor
+Vec3::Vec3(const Vec3& source) {
     x = source.x;
     y = source.y;
     z = source.z;
@@ -66,6 +66,7 @@ double Vec3::mag() {
 Vec3 Vec3::normalized() {
     Vec3 temp;
     temp = *this / this->mag();
+    temp = temp + Vec3(0.0,0.0,0.0);
     return temp;
 }
 
@@ -89,10 +90,18 @@ double Vec3::dot(const Vec3& with) {
     return this->x*with.x + this->y*with.y + this->z*with.z;
 }
 
+// Vec3 Vec3::cross(const Vec3& with) {
+//     Vec3 temp;
+//     temp.x = this->y*with.z - this->z*with.y;
+//     temp.y = this->x*with.z - this->z*with.x;  <<------
+//     temp.z = this->x*with.y - this->y*with.x;
+//     return temp;
+// }
+
 Vec3 Vec3::cross(const Vec3& with) {
     Vec3 temp;
     temp.x = this->y*with.z - this->z*with.y;
-    temp.y = this->x*with.z - this->z*with.x;
+    temp.y = this->z*with.x - this->x*with.z; // <<----- 
     temp.z = this->x*with.y - this->y*with.x;
     return temp;
 }

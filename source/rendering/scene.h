@@ -5,6 +5,7 @@
 
 #include <list>
 #include <vector>
+#include <cmath>
 #include "../vec3.h"
 #include "../camera.h"
 #include "../lighting/light.h"
@@ -42,7 +43,8 @@ class Scene{
         bool leftPressed = false;
         bool rightPressed = false;
 
-        Scene(SDL_Window * window_in, Camera * camera_in, SDL_Color background={100,100,100,255}, Vec3 ambientLight=Vec3(0.2,0.2,0.2));
+        //Scene(SDL_Window * window_in, Camera * camera_in, SDL_Color background={100,100,100,255}, Vec3 ambientLight=Vec3(0.2,0.2,0.2));
+        Scene(SDL_Window * window_in, SDL_Renderer * renderer_in, Camera * camera_in, SDL_Color background={100,100,100,255}, Vec3 ambientLight=Vec3(0.2,0.2,0.2));
         ~Scene(); 
 
         void initialize();

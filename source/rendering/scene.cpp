@@ -8,25 +8,26 @@ Scene::~Scene() {
     SDL_Quit();
 };
 
-Scene::Scene(SDL_Window * window_in, Camera * camera_in, SDL_Color background_in, Vec3 ambientLight_in) {
+Scene::Scene(SDL_Window * window_in, SDL_Renderer * renderer_in, Camera * camera_in, SDL_Color background_in, Vec3 ambientLight_in) {
     backgroundColor = background_in;
     ambientLight = ambientLight_in;
     camera = *camera_in;
-
+    renderer = renderer_in;
     window = window_in;
 
-    initialize();
-};
-
-void Scene::initialize() {
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-    if (!renderer) {}
-    
     SDL_GetRendererOutputSize(renderer, &mouseLastX, &mouseLastY);
     mouseLastX /= 2; mouseLastY /= 2;
-    
-    //
+    // initialize();
 };
+
+// void Scene::initialize() {
+//     // renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+//     // if (!renderer) {}
+    
+    
+    
+//     //
+// };
 
 int Scene::run() {
     isRunning = true;
@@ -109,19 +110,21 @@ void Scene::handleInput() {
     int moveSpeed = 10;
 
     if (upPressed) {
-        camera.target.y -= moveSpeed;
+        camera.position.z -= moveSpeed;
+        camera.target.z -= moveSpeed;
         camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
     }
     if (downPressed) {
-        camera.target.y += moveSpeed;
+        camera.position.z += moveSpeed;
+        camera.target.z += moveSpeed;
         camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
     }
     if (leftPressed) {
-        camera.target.x -= moveSpeed;
+        camera.position.x -= moveSpeed;
         camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
     }
     if (rightPressed) {
-        camera.target.x += moveSpeed;
+        camera.position.x += moveSpeed;
         camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
     }
 };
@@ -167,7 +170,7 @@ void Scene::paintCanvas(std::vector<std::vector<SDL_Color>> * canvas_in) {
     Mat4 cameraToWorld = camera.cameraToWorldMatrix();
 
     for (int l = 0; l < canvasLines; l++){
-        double yj = -camera.frameHeight/2 + dy/2 + l*dy;
+        double yj = camera.frameHeight/2 - dy/2 - l*dy;
         
         for (int c = 0; c < canvasColumns; c++){
             double xj = -camera.frameWidth/2 + dx/2 + c*dx;
@@ -179,12 +182,12 @@ void Scene::paintCanvas(std::vector<std::vector<SDL_Color>> * canvas_in) {
             Ray raycast = Ray(camera.position);
             
             //TODO: swap to using matrices.
-            // Vec3 targetScreenPos = camera.position;
-            // targetScreenPos = targetScreenPos + camera.k * -camera.frameDistance;
-            // targetScreenPos = targetScreenPos + camera.i * xj;
-            // targetScreenPos = targetScreenPos + camera.j * yj;
-            Vec3 targetScreenPos = Vec3(xj,yj,-camera.frameDistance);
-            targetScreenPos = (cameraToWorld * targetScreenPos).to3();
+            Vec3 targetScreenPos = camera.position;
+            targetScreenPos = targetScreenPos + camera.k * -camera.frameDistance;
+            targetScreenPos = targetScreenPos + camera.i * xj;
+            targetScreenPos = targetScreenPos + camera.j * yj;
+            // Vec3 targetScreenPos = Vec3(xj,yj,-camera.frameDistance);
+            // targetScreenPos = (cameraToWorld * targetScreenPos).to3();
             
             raycast.pointTowards(targetScreenPos);
 
@@ -232,9 +235,9 @@ SDL_Color Scene::getLightColorAt(Ray& raycast) {
             }
         }
 
-        if (isShadow) break; //sai do loop das luzes
+        if (isShadow) continue; //vai pra proxima luz
         
-        eyeIntensity = eyeIntensity + light->calculateHitIntensity(&raycast);
+        eyeIntensity = eyeIntensity + light->calculateHitIntensity(renderer, &raycast);
     }
 
     eyeIntensity = (eyeIntensity * 255).floored();

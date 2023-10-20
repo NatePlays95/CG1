@@ -9,7 +9,7 @@ public:
 
     Vec3 calculateDiffuseIntensity(Ray * raycast);
     Vec3 calculateSpecularIntensity(Ray * raycast);
-    Vec3 calculateHitIntensity(Ray * raycast);
+    Vec3 calculateHitIntensity(SDL_Renderer* renderer, Ray * raycast);
 };
 
 #endif

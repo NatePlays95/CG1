@@ -8,8 +8,7 @@ PointLight::PointLight(Vec3 position_in, Vec3 intensity_in) : Light(position_in,
 Vec3 PointLight::calculateDiffuseIntensity(Ray * raycast) {
     //Vec3 diffuseIntensity;
     
-    // const Vec3 n = raycast->contact_normal;
-    //Vec3 p = raycast->contact_position;
+
     Vec3 matr = raycast->contact_material.roughness;
     Vec3 l = (this->position - raycast->contactPosition()).normalized();
     Vec3 i = intensity;
@@ -48,7 +47,7 @@ Vec3 PointLight::calculateSpecularIntensity(Ray * raycast) {
     return specularIntensity;
 };
 
-Vec3 PointLight::calculateHitIntensity(Ray * raycast) {
+Vec3 PointLight::calculateHitIntensity(SDL_Renderer* renderer, Ray * raycast) {
     Vec3 hitIntensity = Vec3(0,0,0);
     
     Vec3 i = intensity;
@@ -57,6 +56,10 @@ Vec3 PointLight::calculateHitIntensity(Ray * raycast) {
     Vec3 n = raycast->contact_normal;
     Vec3 matr = raycast->contact_material.roughness;
     Vec3 mats = raycast->contact_material.specular;
+
+    if (raycast->contact_material.texture != nullptr) {
+        matr = raycast->contact_material.getDiffuseAtUV(renderer, raycast->contact_uv);
+    }
     
     double distanceDecayFactor = 1 / ((position - raycast->contact_position)).magSquared();
     

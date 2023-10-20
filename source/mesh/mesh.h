@@ -9,6 +9,7 @@
 #include <iostream>
 #include <sstream>
 
+
 using namespace std;
 
 // struct Vertex {
@@ -30,19 +31,28 @@ using namespace std;
 struct Face { //all faces should be triangulated
     vector<unsigned int> vertexIndices;
     vector<unsigned int> normalIndices;
+    vector<unsigned int> uvIndices;
 };
 
 class Mesh : public Shape {
     public:
         Mesh();
-        Mesh( vector<Vec3*>& vertices_in,  vector<Vec3*>& vertexNormals_in,  vector<Face>& faces_in);
+        Mesh( vector<Vec3*>& vertices_in,  vector<Vec3*>& normals_in, vector<Vec3*>& uvs_in, vector<Face>& faces_in);
         bool intersect(Ray& raycast);
 
-        static Mesh loadFromFileObj(const std::string& fileName);
+        // static Mesh loadFromFileObj(const std::string& fileName);
+        void loadFromFileObj(const std::string& fileName);
 
-    private:
+        bool intersectFace(Face& face, Ray& raycast);
+
+        void applyTransform(Mat4 transform);
+
+        void printNormals();
+
+    protected:
         vector<Vec3*> vertices;
         vector<Vec3*> normals;
+        vector<Vec3*> uvs;
         vector<Face> faces;
 };
 

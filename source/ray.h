@@ -14,6 +14,7 @@ class Ray{
         double t = std::numeric_limits<double>::infinity();
         Vec3 contact_position;
         Vec3 contact_normal;
+        Vec3 contact_uv;
         SDL_Color contact_color;
         Material contact_material;
 
@@ -25,6 +26,7 @@ class Ray{
         Vec3 contactPosition();
         bool updateT(double new_t, Vec3 new_normal, SDL_Color new_color);
         bool updateT(double new_t, Vec3 new_normal, Material new_material);
+        bool updateT(double new_t, Vec3 new_normal, Material new_material, Vec3 uv);
 };
 
 #endif
