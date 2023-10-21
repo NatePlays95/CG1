@@ -8,8 +8,8 @@ class WrappedMesh : public Mesh {
 
         WrappedMesh();
 
-        double boundsMinX = 1000, boundsMinY = 1000, boundsMinZ = 1000;
-        double boundsMaxX = 1000, boundsMaxY = 1000, boundsMaxZ = 1000;
+        double boundsMinX = -100000, boundsMinY = -100000, boundsMinZ = -100000;
+        double boundsMaxX = 100000, boundsMaxY = 100000, boundsMaxZ = 100000;
 
         double margin = 0.5;
 

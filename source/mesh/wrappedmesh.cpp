@@ -51,8 +51,8 @@ void WrappedMesh::recalculateBounds() {
         if (boundsMinY > vertex->y) boundsMinY = vertex->y;
         if (boundsMinZ > vertex->z) boundsMinZ = vertex->z;
         if (boundsMaxX < vertex->x) boundsMaxX = vertex->x;
-        if (boundsMaxY < vertex->x) boundsMaxY = vertex->y;
-        if (boundsMaxZ < vertex->x) boundsMaxZ = vertex->z;
+        if (boundsMaxY < vertex->y) boundsMaxY = vertex->y;
+        if (boundsMaxZ < vertex->z) boundsMaxZ = vertex->z;
     }
     boundsMinX -= margin; boundsMinY -= margin; boundsMinZ -= margin;
     boundsMaxX += margin; boundsMaxY += margin; boundsMaxZ += margin;

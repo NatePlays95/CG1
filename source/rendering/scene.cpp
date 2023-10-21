@@ -17,6 +17,8 @@ Scene::Scene(SDL_Window * window_in, SDL_Renderer * renderer_in, Camera * camera
 
     SDL_GetRendererOutputSize(renderer, &mouseLastX, &mouseLastY);
     mouseLastX /= 2; mouseLastY /= 2;
+
+    canvas.resize(canvasLines, std::vector<SDL_Color>(canvasColumns));
     // initialize();
 };
 
@@ -86,6 +88,18 @@ void Scene::handleInput() {
                 case SDLK_RIGHT:
                     rightPressed = true;
                     break;
+                case SDLK_o:
+                    canvasColumns = min(canvasColumns+50, 500);
+                    break;
+                case SDLK_i:
+                    canvasColumns = max(canvasColumns-50, 50);
+                    break;
+                case SDLK_l:
+                    canvasLines = min(canvasLines+50, 500);
+                    break;
+                case SDLK_k:
+                    canvasLines = max(canvasLines-50, 50);
+                    break;
             }
         } 
         else if (event.type == SDL_KEYUP) {
@@ -150,7 +164,7 @@ void Scene::render() {
     SDL_RenderClear(renderer);
     
     //draw all 3d shapes
-    canvas.resize(canvasLines, std::vector<SDL_Color>(canvasColumns));
+    // canvas.resize(canvasLines, std::vector<SDL_Color>(canvasColumns));
     paintCanvas(&canvas);
 
     //now draw to screen
@@ -186,14 +200,11 @@ void Scene::paintCanvas(std::vector<std::vector<SDL_Color>> * canvas_in) {
             targetScreenPos = targetScreenPos + camera.k * -camera.frameDistance;
             targetScreenPos = targetScreenPos + camera.i * xj;
             targetScreenPos = targetScreenPos + camera.j * yj;
-            // Vec3 targetScreenPos = Vec3(xj,yj,-camera.frameDistance);
-            // targetScreenPos = (cameraToWorld * targetScreenPos).to3();
             
             raycast.pointTowards(targetScreenPos);
 
             for (auto obj : shapesList) {
                 if (obj->intersect(raycast)) {
-                    //resultColor = raycast.contact_color;
                     hitSomething = true;
                 }
             }
@@ -214,6 +225,9 @@ SDL_Color Scene::getLightColorAt(Ray& raycast) {
     Vec3 eyeIntensity = Vec3(0,0,0);
 
     Vec3 mata = raycast.contact_material.ambient;
+    if (raycast.contact_material.texture != nullptr) {
+        mata = raycast.contact_material.getDiffuseAtUV(renderer, raycast.contact_uv);
+    }
     Vec3 ambientIntensity = Vec3(ambientLight.x*mata.x, ambientLight.y*mata.y, ambientLight.z*mata.z);
 
     eyeIntensity = eyeIntensity + ambientIntensity;

@@ -34,8 +34,8 @@ int main(int argv, char** args)
     Camera camera;
     camera.frameWidth = 60;
     camera.frameHeight = 60;
-    camera.frameDistance = 30;
-    camera.lookAt(Vec3(0,0,0), Vec3(0,0,-100), Vec3(0,1,0));
+    camera.frameDistance = 50;
+    camera.lookAt(Vec3(41,31,60), Vec3(0,0,0), Vec3(0,1,0));
 
     Scene scene = Scene(window, renderer, &camera, BACKGROUND_COLOR, AMBIENT_LIGHT);
     //Scene scene = Scene(window, &camera, BACKGROUND_COLOR, AMBIENT_LIGHT);
@@ -85,6 +85,15 @@ int main(int argv, char** args)
     // objCar->material = Material(Vec3(0.2, 0.2, 0.2),Vec3(1, 1, 1),Vec3(0.3, 0.3, 0.3), 10);
     // Texture* texCar = new Texture("s15_base_color");
     // objCar->material.texture = texCar;
+
+    WrappedMesh* objBlueFalcon = new WrappedMesh();
+    objBlueFalcon->loadFromFileObj("blue_falcon");
+    // objBlueFalcon->applyTransform(Transformations::scale(20,20,20));
+    objBlueFalcon->recalculateBounds();
+    objBlueFalcon->applyTransform(Transformations::translate(0,0,-90));
+    objBlueFalcon->material = Material(Vec3(0.2, 0.2, 0.2),Vec3(1, 1, 1),Vec3(0.7, 0.8, 1), 100);
+    Texture* texBlueFalcon = new Texture("blue_falcon");
+    objBlueFalcon->material.texture = texBlueFalcon;
     
     // WrappedMesh* objCube2 = new WrappedMesh();
     // objCube2->loadFromFileObj("cube");
@@ -96,8 +105,9 @@ int main(int argv, char** args)
     // scene.addShape(sphere3);
     scene.addShape(ground);
     scene.addShape(wall);
-    scene.addShape(objCube);
+    // scene.addShape(objCube);
     // scene.addShape(objCar);
+    scene.addShape(objBlueFalcon);
     // scene.addShape(cylinder);
     // scene.addShape(cone);
     // scene.addShape(cone2);
