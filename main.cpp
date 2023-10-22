@@ -15,19 +15,31 @@
 
 using namespace std;
 const double PI  = 3.141592653589793238463;
-int WINDOW_WIDTH = 500; int WINDOW_HEIGHT = 500;
+int WINDOW_WIDTH = 1000; int WINDOW_HEIGHT = 1000;
+
+
 
 
 int main(int argv, char** args)
 {
+    
     SDL_Init(SDL_INIT_EVERYTHING);
     int imgFlags = IMG_INIT_PNG;  // Initialize support for PNG images (or other formats).
     if ((IMG_Init(imgFlags) & imgFlags) != imgFlags) {
         // Handle SDL_image initialization error.
     }
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.Fonts->Build();
 
     SDL_Window *window = SDL_CreateWindow("Hello SDL!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+    ImGui_ImplSDL2_InitForSDLRenderer(window, renderer);
+    ImGuiSDL::Initialize(renderer, WINDOW_WIDTH, WINDOW_HEIGHT);
+    // ImGui_ImplSDL2_NewFrame();
+
     SDL_Color BACKGROUND_COLOR = {100,100,100,255};
     Vec3 AMBIENT_LIGHT = Vec3(0.5,0.5,0.5);
 
@@ -89,7 +101,7 @@ int main(int argv, char** args)
 
     WrappedMesh* objBlueFalcon = new WrappedMesh();
     objBlueFalcon->loadFromFileObj("blue_falcon");
-    objBlueFalcon->applyTransform(Transformations::scale(2,2,2));
+    objBlueFalcon->applyTransform(Transformations::scale(0.5,0.5,0.5));
     // objBlueFalcon->applyTransform(Transformations::rotateZAroundPoint(PI/3.0, Vec3(-20,0,0)));
     objBlueFalcon->recalculateBounds();
     // objBlueFalcon->applyTransform(Transformations::translate(0,0,-90));

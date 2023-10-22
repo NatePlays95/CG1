@@ -5,6 +5,9 @@
 
 Scene::~Scene() {
     // Clean up resources
+    // ImGui_ImplWin32_Shutdown();
+    ImGui_ImplSDL2_Shutdown();
+    ImGui::DestroyContext();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
@@ -23,32 +26,35 @@ Scene::Scene(SDL_Window * window_in, SDL_Renderer * renderer_in, Camera * camera
     canvas.resize(SDL_GetWindowSurface(window)->h, std::vector<SDL_Color>(SDL_GetWindowSurface(window)->w));
 
     renderWorkersFinished = std::vector<bool>(canvasLines*canvasColumns, true);;
-    // initialize();
 };
 
-// void Scene::initialize() {
-//     // renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-//     // if (!renderer) {}
-    
-    
-    
-//     //
-// };
+
 
 int Scene::run() {
     isRunning = true;
+
     while (isRunning) {
-        // float deltaTime = 0.016f; // Example time step (adjust as needed)
+        // ImGui_ImplWin32_NewFrame();
+        ImGui_ImplSDL2_NewFrame();
+        ImGui::NewFrame();
+        ImGui::ShowDemoWindow(&isRunning);
+
+        // ImGuiSDL::Render(ImGui::GetDrawData());
+
         handleInput();
-        // std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        //update(deltaTime);
-        time_t start, end;
-        time(&start);
+
+            time_t start, end;
+            time(&start);
         render();
-        time(&end);
-        double time_taken = double(end-start);
-        cout << "time taken for frame: " << time_taken << "s" << endl;
+            time(&end);
+            double time_taken = double(end-start);
+            cout << "time taken for render: " << time_taken << "s" << endl;
+
+        ImGui::Render();
+        ImGuiSDL::Render(ImGui::GetDrawData());
+        SDL_RenderPresent(renderer);
     }
+
 
     return 0;
 };
@@ -59,6 +65,8 @@ void Scene::handleInput() {
 
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
+        ImGui_ImplSDL2_ProcessEvent(&event);
+
         if (event.type == SDL_QUIT) {
             isRunning = false;
         } 

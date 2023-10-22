@@ -2,7 +2,10 @@
 #define SCENE_H
 
 #include <SDL2/SDL.h>
-
+#include "../imgui/imgui.h"
+#include "../imgui/imgui_impl_sdl2.h"
+#include "../imgui/imgui_sdl.h"
+// #include "../imgui/imgui_impl_win32.h"
 #include <list>
 #include <vector>
 #include <cmath>
@@ -53,7 +56,6 @@ class Scene {
         Scene(SDL_Window * window_in, SDL_Renderer * renderer_in, Camera * camera_in, SDL_Color background={100,100,100,255}, Vec3 ambientLight=Vec3(0.2,0.2,0.2));
         ~Scene(); 
 
-        void initialize();
         int run();
 
         void handleInput();
