@@ -1,4 +1,7 @@
 #include "camera.h"
+#include <cmath>
+
+const double PI  = 3.141592653589793238463;
 
 Camera::Camera(){
     //eye = new Ray();
@@ -26,6 +29,20 @@ Mat4 Camera::lookAt(Vec3 eye, Vec3 at, Vec3 up_direction) {
     i = right; j = up; k = forward;
 
     return this->cameraToWorldMatrix();
+};
+
+void Camera::setFOV(double angleRadians) {
+    // consider hfov and vfov the same, due to square window
+    angleRadians = std::max(angleRadians, PI/18.0); //min fov: 10°
+    angleRadians = std::min(angleRadians, 17*PI/18.0); //max fov: 170°
+
+    double t = tan(angleRadians/2.0);
+    // horizontal fov
+    // w = d * tan(hfov/2) * 2
+    this->frameWidth = 2 * frameDistance * t;
+    // verical fov
+    // h = d * tan(vfov/2) * 2
+    this->frameHeight = 2 * frameDistance * t;
 };
 
 // Mat4 Camera::lookAt(Vec3 at) {

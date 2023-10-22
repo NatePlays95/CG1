@@ -5,7 +5,6 @@
 #include <cmath>
 #include <algorithm>
 #include <list>
-
 #include "source/mat4.h"
 #include "source/camera.h"
 #include "source/primitives.h"
@@ -15,8 +14,9 @@
 #include "source/transformations.h"
 
 using namespace std;
-
+const double PI  = 3.141592653589793238463;
 int WINDOW_WIDTH = 500; int WINDOW_HEIGHT = 500;
+
 
 int main(int argv, char** args)
 {
@@ -35,6 +35,7 @@ int main(int argv, char** args)
     camera.frameWidth = 60;
     camera.frameHeight = 60;
     camera.frameDistance = 50;
+    camera.setFOV(PI/2.0); //90°
     camera.lookAt(Vec3(41,31,60), Vec3(0,0,0), Vec3(0,1,0));
 
     Scene scene = Scene(window, renderer, &camera, BACKGROUND_COLOR, AMBIENT_LIGHT);
@@ -88,10 +89,11 @@ int main(int argv, char** args)
 
     WrappedMesh* objBlueFalcon = new WrappedMesh();
     objBlueFalcon->loadFromFileObj("blue_falcon");
-    // objBlueFalcon->applyTransform(Transformations::scale(20,20,20));
+    objBlueFalcon->applyTransform(Transformations::scale(2,2,2));
+    // objBlueFalcon->applyTransform(Transformations::rotateZAroundPoint(PI/3.0, Vec3(-20,0,0)));
     objBlueFalcon->recalculateBounds();
-    objBlueFalcon->applyTransform(Transformations::translate(0,0,-90));
-    objBlueFalcon->material = Material(Vec3(0.2, 0.2, 0.2),Vec3(1, 1, 1),Vec3(0.7, 0.8, 1), 100);
+    // objBlueFalcon->applyTransform(Transformations::translate(0,0,-90));
+    objBlueFalcon->material = Material(Vec3(1, 1, 1),Vec3(1, 1, 1),Vec3(0.7, 0.8, 1), 100);
     Texture* texBlueFalcon = new Texture("blue_falcon");
     objBlueFalcon->material.texture = texBlueFalcon;
     

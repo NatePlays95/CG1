@@ -1,5 +1,7 @@
 #include "scene.h"
 #include <algorithm>
+#include <chrono>
+#include <iostream>
 
 Scene::~Scene() {
     // Clean up resources
@@ -18,7 +20,9 @@ Scene::Scene(SDL_Window * window_in, SDL_Renderer * renderer_in, Camera * camera
     SDL_GetRendererOutputSize(renderer, &mouseLastX, &mouseLastY);
     mouseLastX /= 2; mouseLastY /= 2;
 
-    canvas.resize(canvasLines, std::vector<SDL_Color>(canvasColumns));
+    canvas.resize(SDL_GetWindowSurface(window)->h, std::vector<SDL_Color>(SDL_GetWindowSurface(window)->w));
+
+    renderWorkersFinished = std::vector<bool>(canvasLines*canvasColumns, true);;
     // initialize();
 };
 
@@ -34,11 +38,16 @@ Scene::Scene(SDL_Window * window_in, SDL_Renderer * renderer_in, Camera * camera
 int Scene::run() {
     isRunning = true;
     while (isRunning) {
+        // float deltaTime = 0.016f; // Example time step (adjust as needed)
         handleInput();
-
-        float deltaTime = 0.016f; // Example time step (adjust as needed)
+        // std::this_thread::sleep_for(std::chrono::milliseconds(100));
         //update(deltaTime);
+        time_t start, end;
+        time(&start);
         render();
+        time(&end);
+        double time_taken = double(end-start);
+        cout << "time taken for frame: " << time_taken << "s" << endl;
     }
 
     return 0;
@@ -164,9 +173,12 @@ void Scene::render() {
     SDL_RenderClear(renderer);
     
     //draw all 3d shapes
-    // canvas.resize(canvasLines, std::vector<SDL_Color>(canvasColumns));
-    paintCanvas(&canvas);
 
+    paintCanvas();
+    // if (isRenderWorkersAllFinished()) {
+        // paintCanvasAsync();
+    // };
+    
     //now draw to screen
     drawCanvasToWindow(&canvas);
 
@@ -175,49 +187,105 @@ void Scene::render() {
 };
 
 
-
-
-
-void Scene::paintCanvas(std::vector<std::vector<SDL_Color>> * canvas_in) {
-    double dx = camera.frameWidth / canvasColumns;
-    double dy = camera.frameHeight / canvasLines;
-    Mat4 cameraToWorld = camera.cameraToWorldMatrix();
-
-    for (int l = 0; l < canvasLines; l++){
-        double yj = camera.frameHeight/2 - dy/2 - l*dy;
-        
-        for (int c = 0; c < canvasColumns; c++){
-            double xj = -camera.frameWidth/2 + dx/2 + c*dx;
-            
-            
-
-            SDL_Color resultColor;// = backgroundColor;
-            bool hitSomething = false;
-            Ray raycast = Ray(camera.position);
-            
-            //TODO: swap to using matrices.
-            Vec3 targetScreenPos = camera.position;
-            targetScreenPos = targetScreenPos + camera.k * -camera.frameDistance;
-            targetScreenPos = targetScreenPos + camera.i * xj;
-            targetScreenPos = targetScreenPos + camera.j * yj;
-            
-            raycast.pointTowards(targetScreenPos);
-
-            for (auto obj : shapesList) {
-                if (obj->intersect(raycast)) {
-                    hitSomething = true;
-                }
-            }
-
-            if (hitSomething) {
-                resultColor = getLightColorAt(raycast);
-            } else {
-                resultColor = backgroundColor;
-            }
-
-            canvas[l][c] = resultColor;
+bool Scene::isRenderWorkersAllFinished() {
+    bool result = true;
+    for (int i = 0; i < renderWorkersFinished.size(); i++) {
+        if (renderWorkersFinished[i] == false) {
+            result = false; break;
         }
     }
+    return result;
+}
+
+void Scene::paintCanvas() {
+    renderWorkers.clear();
+    renderWorkersFinished = std::vector<bool>(canvasLines*canvasColumns, true);;
+
+    for (int l = 0; l < canvasLines; l++){
+        for (int c = 0; c < canvasColumns; c++){
+            paintPixel(l, c);
+        }
+    }
+
+};
+
+void Scene::paintCanvasAsync() {
+    renderWorkers.clear();
+    renderWorkersFinished = std::vector<bool>(canvasLines*canvasColumns, false);;
+    int columnsCount = canvasColumns;
+
+    for (int l = 0; l < 2; l++){
+        for (int c = 0; c < 2; c++) {
+
+            // std::thread* myThread = new std::thread([this, l, columnsCount]() {
+            //     this->paintLine(l);
+            //     for (int a = 0; a < columnsCount; a++) {
+            //         this->renderWorkersFinished[l*columnsCount + a] = true;
+            //     }
+            // }); 
+            std::thread* myThread = new std::thread([this, l, c]() {
+                this->paintQuadrant(
+                    (l)*canvasLines/2, (l+1)*canvasLines/2,
+                    (c)*canvasColumns/2, (c+1)*canvasColumns/2);
+                // for (int a = 0; a < columnsCount; a++) {
+                //     this->renderWorkersFinished[l*columnsCount + a] = true;
+                // }
+            }); 
+            renderWorkers.push_back(myThread);
+
+        }
+    }
+
+    for (int i = 0; i < renderWorkers.size(); i++) {
+        renderWorkers[i]->join();
+    }
+};
+
+void Scene::paintLine(int l) {
+    for (int c = 0; c < canvasColumns; c++){
+        paintPixel( l,  c);
+    }
+}
+
+void Scene::paintQuadrant(int startL, int endL, int startC, int endC) {
+    for (int l = startL; l < endL; l++){
+        for (int c = startC; c < endC; c++){
+            paintPixel( l,  c);
+        } 
+    }
+}
+
+
+void Scene::paintPixel(int l, int c) {
+    double dx = camera.frameWidth / canvasColumns;
+    double dy = camera.frameHeight / canvasLines;
+    double frameY = camera.frameHeight/2 - dy/2 - l*dy;
+    double frameX = -camera.frameWidth/2 + dx/2 + c*dx;
+    SDL_Color resultColor;// = backgroundColor;
+    bool hitSomething = false;
+    Ray raycast = Ray(camera.position);
+
+    //TODO: swap to using matrices.
+    Vec3 targetScreenPos = camera.position;
+    targetScreenPos = targetScreenPos + camera.k * -camera.frameDistance;
+    targetScreenPos = targetScreenPos + camera.i * frameX;
+    targetScreenPos = targetScreenPos + camera.j * frameY;
+
+    raycast.pointTowards(targetScreenPos);
+
+    for (auto obj : shapesList) {
+        if (obj->intersect(raycast)) {
+            hitSomething = true;
+        }
+    }
+
+    if (hitSomething) {
+        resultColor = getLightColorAt(raycast);
+    } else {
+        resultColor = backgroundColor;
+    }
+
+    canvas[l][c] = resultColor;
 };
 
 SDL_Color Scene::getLightColorAt(Ray& raycast) {

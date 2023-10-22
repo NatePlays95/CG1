@@ -6,6 +6,9 @@
 #include <list>
 #include <vector>
 #include <cmath>
+// #include <future>
+#include <thread>
+#include <numbers>
 #include "../vec3.h"
 #include "../camera.h"
 #include "../lighting/light.h"
@@ -14,7 +17,7 @@
 
 using namespace std;
 
-class Scene{
+class Scene {
     public:
         SDL_Window *window;
         SDL_Renderer *renderer;
@@ -29,6 +32,9 @@ class Scene{
 
         int canvasLines = 100; int canvasColumns = 100;
         std::vector<std::vector<SDL_Color>> canvas;
+
+        std::vector<std::thread *> renderWorkers;
+        std::vector<bool> renderWorkersFinished;
         
         bool isRunning = false;
 
@@ -54,7 +60,12 @@ class Scene{
         void updateCameraRotation(int mouseX, int mouseY);
 
         void render();
-        void paintCanvas(std::vector<std::vector<SDL_Color>> * canvas_in);
+        bool isRenderWorkersAllFinished();
+        void paintCanvas();
+        void paintCanvasAsync();
+        void paintLine(int l);
+        void paintQuadrant(int startL, int endL, int startC, int endC);
+        void paintPixel(int l, int c);
         void drawCanvasToWindow(std::vector<std::vector<SDL_Color>> * canvas_in);
 
         void addLight(Light * light_in);
