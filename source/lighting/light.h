@@ -10,8 +10,10 @@ public:
 
     Light(Vec3 position_in, Vec3 intensity_in=Vec3(1,1,1));
 
-    virtual Vec3 calculateDiffuseIntensity(Ray * raycast) = 0;
-    virtual Vec3 calculateSpecularIntensity(Ray * raycast) = 0;
+    // virtual Vec3 calculateDiffuseIntensity(Ray * raycast) = 0;
+    // virtual Vec3 calculateSpecularIntensity(Ray * raycast) = 0;
+    virtual Vec3 getLVector(Vec3 incidentPosition) = 0;
+    virtual double getIncidenceDistance(Vec3 incidentPosition) = 0;
     virtual Vec3 calculateHitIntensity(SDL_Renderer* renderer, Ray * raycast) = 0;
 };
 

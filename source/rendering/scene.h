@@ -33,7 +33,7 @@ class Scene {
         std::list<Light*> lightsList;
         std::list<Shape*> shapesList;
 
-        int canvasLines = 100; int canvasColumns = 100;
+        int canvasLines = 50; int canvasColumns = 50;
         std::vector<std::vector<SDL_Color>> canvas;
 
         std::vector<std::thread *> renderWorkers;
@@ -46,7 +46,8 @@ class Scene {
         int mouseLastY = 0;
         bool mouseLeftPressed = false;
 
-
+        bool forwardPressed = false;
+        bool backwardPressed = false;
         bool upPressed = false;
         bool downPressed = false;
         bool leftPressed = false;
@@ -65,6 +66,7 @@ class Scene {
         bool isRenderWorkersAllFinished();
         void paintCanvas();
         void paintCanvasAsync();
+        void paintCanvasNewThread();
         void paintLine(int l);
         void paintQuadrant(int startL, int endL, int startC, int endC);
         void paintPixel(int l, int c);

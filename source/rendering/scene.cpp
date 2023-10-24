@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <chrono>
 #include <iostream>
+#include "../transformations.h"
 
 Scene::~Scene() {
     // Clean up resources
@@ -50,6 +51,7 @@ int Scene::run() {
             double time_taken = double(end-start);
             cout << "time taken for render: " << time_taken << "s" << endl;
 
+        
         ImGui::Render();
         ImGuiSDL::Render(ImGui::GetDrawData());
         SDL_RenderPresent(renderer);
@@ -94,16 +96,34 @@ void Scene::handleInput() {
                     isRunning = false;
                     break;
                 case SDLK_UP:
-                    upPressed = true;
+                    forwardPressed = true;
+                    break;
+                case SDLK_w:
+                    forwardPressed = true;
                     break;
                 case SDLK_DOWN:
-                    downPressed = true;
+                    backwardPressed = true;
+                    break;
+                case SDLK_s:
+                    backwardPressed = true;
                     break;
                 case SDLK_LEFT:
                     leftPressed = true;
                     break;
+                case SDLK_a:
+                    leftPressed = true;
+                    break;
                 case SDLK_RIGHT:
                     rightPressed = true;
+                    break;
+                case SDLK_d:
+                    rightPressed = true;
+                    break;
+                case SDLK_q:
+                    upPressed = true;
+                    break;
+                case SDLK_e:
+                    downPressed = true;
                     break;
                 case SDLK_o:
                     canvasColumns = min(canvasColumns+50, 500);
@@ -123,39 +143,69 @@ void Scene::handleInput() {
             SDL_Keycode keyReleased = event.key.keysym.sym;
             switch (keyReleased) {
                 case SDLK_UP:
-                    upPressed = false;
+                    forwardPressed = false;
+                    break;
+                case SDLK_w:
+                    forwardPressed = false;
                     break;
                 case SDLK_DOWN:
-                    downPressed = false;
+                    backwardPressed = false;
+                    break;
+                case SDLK_s:
+                    backwardPressed = false;
                     break;
                 case SDLK_LEFT:
+                    leftPressed = false;
+                    break;
+                case SDLK_a:
                     leftPressed = false;
                     break;
                 case SDLK_RIGHT:
                     rightPressed = false;
                     break;
+                case SDLK_d:
+                    rightPressed = false;
+                    break;
+                case SDLK_q:
+                    upPressed = false;
+                    break;
+                case SDLK_e:
+                    downPressed = false;
+                    break;
             }
         }
     }
 
-    int moveSpeed = 10;
+    int moveSpeed = 1;
 
-    if (upPressed) {
-        camera.position.z -= moveSpeed;
-        camera.target.z -= moveSpeed;
+    if (forwardPressed) {
+        camera.position = camera.position + camera.k*moveSpeed*-1;
+        camera.target = camera.target + camera.k*moveSpeed*-1;
         camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
     }
-    if (downPressed) {
-        camera.position.z += moveSpeed;
-        camera.target.z += moveSpeed;
+    if (backwardPressed) {
+        camera.position = camera.position - camera.k*moveSpeed*-1;
+        camera.target = camera.target - camera.k*moveSpeed*-1;
         camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
     }
     if (leftPressed) {
-        camera.position.x -= moveSpeed;
+        camera.position = camera.position + camera.i*moveSpeed*-1;
+        camera.target = camera.target + camera.i*moveSpeed*-1;
         camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
     }
     if (rightPressed) {
-        camera.position.x += moveSpeed;
+        camera.position = camera.position - camera.i*moveSpeed*-1;
+        camera.target = camera.target - camera.i*moveSpeed*-1;
+        camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
+    }
+    if (upPressed) {
+        camera.position = camera.position + camera.j*moveSpeed;
+        camera.target = camera.target + camera.j*moveSpeed;
+        camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
+    }
+    if (downPressed) {
+        camera.position = camera.position - camera.j*moveSpeed;
+        camera.target = camera.target - camera.j*moveSpeed;
         camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
     }
 };
@@ -165,11 +215,16 @@ void Scene::handleInput() {
 void Scene::updateCameraRotation(int mouseX, int mouseY) {
     double mouseSensitivity = 0.3;
  
-    double deltaX = mouseX-mouseLastX;
-    double deltaY = mouseY-mouseLastY; 
+    double deltaX = (mouseX-mouseLastX)*mouseSensitivity;
+    double deltaY = (mouseY-mouseLastY)*mouseSensitivity; 
 
-    Vec3 moveVec = Vec3(-deltaX, deltaY, 0.0)*mouseSensitivity; //should we multiply with cameraToWorld?
-    camera.lookAt(camera.position+moveVec, camera.target+moveVec, Vec3(0,1,0));
+    //look left/right: rotate around world Y axis
+    camera.target = (Transformations::rotateYAroundPoint(deltaX/100.0, camera.position) * Vec4(camera.target)).to3();
+    
+    //look up/down: rotate around camera J axis
+
+    // Vec3 moveVec = Vec3(-deltaX, deltaY, 0.0)*mouseSensitivity; //should we multiply with cameraToWorld?
+    camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
 
     mouseLastX = mouseX; mouseLastY = mouseY;
 };
@@ -181,16 +236,14 @@ void Scene::render() {
     SDL_RenderClear(renderer);
     
     //draw all 3d shapes
-
-    paintCanvas();
+    // paintCanvas();
+    paintCanvasNewThread();
     // if (isRenderWorkersAllFinished()) {
         // paintCanvasAsync();
     // };
     
     //now draw to screen
     drawCanvasToWindow(&canvas);
-
-
     SDL_RenderPresent(renderer);
 };
 
@@ -217,6 +270,26 @@ void Scene::paintCanvas() {
 
 };
 
+void Scene::paintCanvasNewThread() {
+    if (!isRenderWorkersAllFinished()) return;
+
+    // renderWorkers.clear();
+    renderWorkersFinished = std::vector<bool>(1, false);;
+
+    std::thread* myThread = new std::thread([this]() {
+        while(true) {
+            for (int l = 0; l < canvasLines; l++){
+                for (int c = 0; c < canvasColumns; c++){
+                    paintPixel(l, c);
+                }
+            }
+        }
+        //this->renderWorkersFinished[0] = true;
+    }); 
+    renderWorkers.push_back(myThread);
+    // renderWorkers[0]->join();
+};
+
 void Scene::paintCanvasAsync() {
     renderWorkers.clear();
     renderWorkersFinished = std::vector<bool>(canvasLines*canvasColumns, false);;
@@ -235,8 +308,8 @@ void Scene::paintCanvasAsync() {
                 this->paintQuadrant(
                     (l)*canvasLines/2, (l+1)*canvasLines/2,
                     (c)*canvasColumns/2, (c+1)*canvasColumns/2);
-                // for (int a = 0; a < columnsCount; a++) {
-                //     this->renderWorkersFinished[l*columnsCount + a] = true;
+                // for (int a = (c)*canvasColumns/2; a < (c+1)*canvasColumns; a++) {
+                    // this->renderWorkersFinished[c*canvasColumns + a] = true;
                 // }
             }); 
             renderWorkers.push_back(myThread);
@@ -244,9 +317,9 @@ void Scene::paintCanvasAsync() {
         }
     }
 
-    for (int i = 0; i < renderWorkers.size(); i++) {
-        renderWorkers[i]->join();
-    }
+    // for (int i = 0; i < renderWorkers.size(); i++) {
+        // renderWorkers[i]->join();
+    // }
 };
 
 void Scene::paintLine(int l) {
@@ -309,17 +382,39 @@ SDL_Color Scene::getLightColorAt(Ray& raycast) {
     eyeIntensity = eyeIntensity + ambientIntensity;
     
     for (auto light : lightsList) {
-        Vec3 l = (light->position - raycast.contactPosition()).normalized();
+        Vec3 l = light->getLVector(raycast.contactPosition()).normalized();
 
         //test for shadows
-        Ray shadowRaycast = Ray(light->position, l * (-1));
+        double margin = 0.0001;
+
+        // Ray shadowRaycast = Ray(light->position, l*(-1));
+        // bool raycastHit = false;
+        // bool isShadow = false;
+        // double renderContactDistance = light->getIncidenceDistance(raycast.contactPosition());
+        // for (auto obj : shapesList) {
+        //     raycastHit = obj->intersect(shadowRaycast) || raycastHit;       
+        //     // if (shadowRaycast.t < margin) {//hits ray origin point
+        //     //     raycastHit = false;
+        //     //     continue;
+        //     // }; 
+        //     if (raycastHit && shadowRaycast.t+margin < renderContactDistance){ //sombra
+        //         isShadow = true;
+        //         break;
+        //     }
+        // }
+
+        Ray shadowRaycast = Ray(raycast.contactPosition() + l*margin, l);
+        // Ray shadowRaycast = Ray(raycast.contactPosition(), l);
         bool raycastHit = false;
         bool isShadow = false;
-        double renderContactDistance = (light->position - raycast.contactPosition()).mag();
+        double renderContactDistance = light->getIncidenceDistance(raycast.contactPosition());
         for (auto obj : shapesList) {
-            raycastHit = obj->intersect(shadowRaycast) || raycastHit;
-
-            if (raycastHit && shadowRaycast.t < renderContactDistance - 0.00000001){ //sombra
+            raycastHit = obj->intersect(shadowRaycast) || raycastHit;       
+            // if (shadowRaycast.t < margin) {//hits ray origin point
+            //     raycastHit = false;
+            //     continue;
+            // }; 
+            if (raycastHit && shadowRaycast.t+margin < renderContactDistance){ //sombra
                 isShadow = true;
                 break;
             }

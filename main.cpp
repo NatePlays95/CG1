@@ -7,8 +7,8 @@
 #include <list>
 #include "source/mat4.h"
 #include "source/camera.h"
-#include "source/primitives.h"
-#include "source/lighting/pointlight.h"
+#include "source/primitives/primitives.h"
+#include "source/lighting/lighting.h"
 #include "source/rendering/scene.h"
 #include "source/mesh/wrappedmesh.h"
 #include "source/transformations.h"
@@ -16,8 +16,6 @@
 using namespace std;
 const double PI  = 3.141592653589793238463;
 int WINDOW_WIDTH = 1000; int WINDOW_HEIGHT = 1000;
-
-
 
 
 int main(int argv, char** args)
@@ -48,17 +46,20 @@ int main(int argv, char** args)
     camera.frameHeight = 60;
     camera.frameDistance = 50;
     camera.setFOV(PI/2.0); //90°
-    camera.lookAt(Vec3(41,31,60), Vec3(0,0,0), Vec3(0,1,0));
+    // camera.setFOV(PI/3.0);
+    camera.lookAt(Vec3(45,25,-35), Vec3(0,0,0), Vec3(0,1,0));
 
     Scene scene = Scene(window, renderer, &camera, BACKGROUND_COLOR, AMBIENT_LIGHT);
     //Scene scene = Scene(window, &camera, BACKGROUND_COLOR, AMBIENT_LIGHT);
 
 
 
-    PointLight* pointLight = new PointLight(Vec3(0, 60, -30), Vec3(0.9,0.9,0.9)*5000);
-    scene.addLight(pointLight);
-    // PointLight* pointLight2 = new PointLight(Vec3(0, 60, -100), Vec3(0.9,0.9,0.4)*1000);
-    // scene.addLight(pointLight2);
+    // PointLight* pointLight = new PointLight(Vec3(0, 60, -30), Vec3(0.9,0.9,0.9)*5000);
+    // scene.addLight(pointLight);
+    // SpotLight* spotLight = new SpotLight(Vec3(0, 60, -70), Vec3(0.9,0.9,0.9)*5000, (Vec3(0, 60, -70)*-1 + Vec3(0,0,0)).normalized(), PI/3.0);
+    // scene.addLight(spotLight);
+    DirectionalLight* sun = new DirectionalLight(Vec3(0, 0, 0), Vec3(0.9,0.9,0.6)*5, Vec3(0,-1,5).normalized());
+    scene.addLight(sun);
 
     Sphere* sphereLight = new Sphere(Vec3(0, 60, -30), 10);
     sphereLight->material = Material(Vec3(1,0,0), Vec3(0.7,0.2,0.2), Vec3(0.7,0.2,0.2), 10);    
@@ -66,13 +67,12 @@ int main(int argv, char** args)
     Sphere* sphere3 = new Sphere(Vec3(0,0,-100), 40);
     sphere3->material = Material(Vec3(1,0,0), Vec3(0.7,0.2,0.2), Vec3(0.7,0.2,0.2), 10);
 
-    Plane* ground = new Plane(Vec3(0,-40,0), Vec3(0,1,0));
+    Plane* ground = new Plane(Vec3(0,0,0), Vec3(0,1,0));
     ground->material = Material(Vec3(0.2, 0.7, 0.2), Vec3(0.2, 0.7, 0.2), Vec3(0,0,0));
 
     Plane* wall = new Plane(Vec3(0,0,-200), Vec3(0,0,1));
     wall->material = Material(Vec3(0.3, 0.3, 0.7), Vec3(0.3, 0.3, 0.7), Vec3(0,0,0));
 
-    //40/3.0
     Cylinder* cylinder = new Cylinder(Vec3(0,0,-100), Vec3(-1,1,-1).normalized(), 40/3.0, 120);
     cylinder->setMaterial(Material(Vec3(0.2, 0.3, 0.8),Vec3(0.2, 0.3, 0.8),Vec3(0.2, 0.3, 0.8)));
 
@@ -83,13 +83,13 @@ int main(int argv, char** args)
     Cone* cone2 = new Cone(Vec3(40,-40,-100), Vec3(0,1,0).normalized(), 40, 80);
     cone2->setMaterial(Material(Vec3(0.2, 0.2, 0.2),Vec3(1, 1, 1),Vec3(0.3, 0.3, 0.3), 10));
 
-    WrappedMesh* objCube = new WrappedMesh();
-    objCube->loadFromFileObj("cube");
-    objCube->applyTransform(Transformations::scale(20,20,20));
-    objCube->applyTransform(Transformations::translate(0,0,-100));
-    objCube->material = Material(Vec3(0.2, 0.2, 0.2),Vec3(1, 1, 1),Vec3(0.3, 0.3, 0.3), 10);
-    Texture* texDirt = new Texture("dirt");
-    objCube->material.texture = texDirt;
+    // WrappedMesh* objCube = new WrappedMesh();
+    // objCube->loadFromFileObj("cube");
+    // objCube->applyTransform(Transformations::scale(20,20,20));
+    // objCube->applyTransform(Transformations::translate(0,0,-100));
+    // objCube->material = Material(Vec3(0.2, 0.2, 0.2),Vec3(1, 1, 1),Vec3(0.3, 0.3, 0.3), 10);
+    // Texture* texDirt = new Texture("dirt");
+    // objCube->material.texture = texDirt;
 
     // WrappedMesh* objCar = new WrappedMesh();
     // objCar->loadFromFileObj("s15");
@@ -101,10 +101,10 @@ int main(int argv, char** args)
 
     WrappedMesh* objBlueFalcon = new WrappedMesh();
     objBlueFalcon->loadFromFileObj("blue_falcon");
-    objBlueFalcon->applyTransform(Transformations::scale(0.5,0.5,0.5));
+    objBlueFalcon->applyTransform(Transformations::scale(1,1,1));
     // objBlueFalcon->applyTransform(Transformations::rotateZAroundPoint(PI/3.0, Vec3(-20,0,0)));
     objBlueFalcon->recalculateBounds();
-    // objBlueFalcon->applyTransform(Transformations::translate(0,0,-90));
+    objBlueFalcon->applyTransform(Transformations::translate(0,0,0));
     objBlueFalcon->material = Material(Vec3(1, 1, 1),Vec3(1, 1, 1),Vec3(0.7, 0.8, 1), 100);
     Texture* texBlueFalcon = new Texture("blue_falcon");
     objBlueFalcon->material.texture = texBlueFalcon;
@@ -114,14 +114,21 @@ int main(int argv, char** args)
     // objCube2->applyTransform(Transformations::scale(5,50,5));
     // objCube2->applyTransform(Transformations::translate(0,20,-110));
     // objCube2->material = Material(Vec3(0.2, 0.3, 0.8),Vec3(0.2, 0.3, 0.8),Vec3(0.2, 0.3, 0.8));
+
+    // WrappedMesh* objGorila = new WrappedMesh();
+    // objGorila->loadFromFileObj("gorila");
+    // // objGorila->applyTransform(Transformations::scale(5,50,5));
+    // objGorila->applyTransform(Transformations::translate(0,0,0));
+    // objGorila->material = Material(Vec3(0.7, 0.3, 0.8),Vec3(0.7, 0.3, 0.8),Vec3(1, 1, 1));
     
     // scene.addShape(sphereLight);
     // scene.addShape(sphere3);
     scene.addShape(ground);
-    scene.addShape(wall);
+    // scene.addShape(wall);
     // scene.addShape(objCube);
     // scene.addShape(objCar);
     scene.addShape(objBlueFalcon);
+    // scene.addShape(objGorila);
     // scene.addShape(cylinder);
     // scene.addShape(cone);
     // scene.addShape(cone2);
