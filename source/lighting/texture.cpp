@@ -44,11 +44,11 @@ void Texture::loadImageBMP (const std::string path) {
 };
 
 SDL_Color Texture::getColorAtUV (Vec3 uvVec) {
-    // while (uvVec.x > 1.0) uvVec.x -= 1.0;
-    // while (uvVec.x < 0.0) uvVec.x += 1.0;
     uvVec.y = 1.0 - uvVec.y;
-    // while (uvVec.y > 1.0) uvVec.y -= 1.0;
-    // while (uvVec.y < 0.0) uvVec.y += 1.0;
+
+    //texture should tile
+    uvVec.x -= floor(uvVec.x);
+    uvVec.y -= floor(uvVec.y);
 
     int x = static_cast<int>(uvVec.x * surface->w );
     int y = static_cast<int>(uvVec.y * surface->h );

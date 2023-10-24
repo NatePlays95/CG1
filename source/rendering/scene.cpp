@@ -179,13 +179,17 @@ void Scene::handleInput() {
     int moveSpeed = 1;
 
     if (forwardPressed) {
-        camera.position = camera.position + camera.k*moveSpeed*-1;
-        camera.target = camera.target + camera.k*moveSpeed*-1;
+        Vec3 up = Vec3(0,1,0);
+        Vec3 forward = (camera.k - (camera.k).projectOnto(up)).normalized()*-1;
+        camera.position = camera.position + forward*moveSpeed;
+        camera.target = camera.target + forward*moveSpeed;
         camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
     }
     if (backwardPressed) {
-        camera.position = camera.position - camera.k*moveSpeed*-1;
-        camera.target = camera.target - camera.k*moveSpeed*-1;
+        Vec3 up = Vec3(0,1,0);
+        Vec3 forward = (camera.k - (camera.k).projectOnto(up)).normalized()*-1;
+        camera.position = camera.position - forward*moveSpeed;
+        camera.target = camera.target - forward*moveSpeed;
         camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
     }
     if (leftPressed) {
@@ -199,13 +203,13 @@ void Scene::handleInput() {
         camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
     }
     if (upPressed) {
-        camera.position = camera.position + camera.j*moveSpeed;
-        camera.target = camera.target + camera.j*moveSpeed;
+        camera.position = camera.position + Vec3(0,1,0)*moveSpeed;
+        camera.target = camera.target + Vec3(0,1,0)*moveSpeed;
         camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
     }
     if (downPressed) {
-        camera.position = camera.position - camera.j*moveSpeed;
-        camera.target = camera.target - camera.j*moveSpeed;
+        camera.position = camera.position - Vec3(0,1,0)*moveSpeed;
+        camera.target = camera.target - Vec3(0,1,0)*moveSpeed;
         camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
     }
 };
@@ -259,8 +263,8 @@ bool Scene::isRenderWorkersAllFinished() {
 }
 
 void Scene::paintCanvas() {
-    renderWorkers.clear();
-    renderWorkersFinished = std::vector<bool>(canvasLines*canvasColumns, true);;
+    // renderWorkers.clear();
+    // renderWorkersFinished = std::vector<bool>(canvasLines*canvasColumns, true);;
 
     for (int l = 0; l < canvasLines; l++){
         for (int c = 0; c < canvasColumns; c++){

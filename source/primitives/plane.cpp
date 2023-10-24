@@ -17,12 +17,25 @@ bool Plane::intersect(Ray& raycast) {
     if (denominator == 0) return false;
 
     t = (position - raycast.position).dot(normalDirection) / denominator;
+    Vec3 contactPos = raycast.position + raycast.direction*t;
 
-   
-    // t = ((position.dot(direction) - raycast.position) / raycast.direction.dot(direction));
     Vec3 normal = this->normalDirection;
 
-    return raycast.updateT(t, this->normalDirection, material);
+    //find uv
+    // Vec3 a = normal.cross(Vec3(1, 0, 0));
+    // Vec3 b = normal.cross(Vec3(0, 1, 0));
+    // Vec3 max_ab = a.magSquared() < b.magSquared() ? b : a;
+    // Vec3 c = normal.cross(Vec3(0, 0, 1));
+    // Vec3 uDir = (max_ab.magSquared() < c.magSquared() ? c : max_ab).normalized();
+    // Vec3 vDir = normal.cross(uDir);
+    double uMag = sqrt(normal.x*normal.x + normal.y*normal.y);
+    Vec3 uDir = Vec3(normal.y/uMag, -normal.y/uMag, 0);
+    Vec3 vDir = normal.cross(uDir);
+    double uvScaling = 0.001;
+
+    Vec3 uv = Vec3(uDir.dot(contactPos), vDir.dot(contactPos), 0)*uvScaling;
+
+    return raycast.updateT(t, this->normalDirection, material, uv);
     // if (shouldUpdate) {
     //     raycast.contact_color = color;
     // }

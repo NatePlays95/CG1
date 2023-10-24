@@ -42,12 +42,12 @@ int main(int argv, char** args)
     Vec3 AMBIENT_LIGHT = Vec3(0.5,0.5,0.5);
 
     Camera camera;
-    camera.frameWidth = 60;
-    camera.frameHeight = 60;
+    // camera.frameWidth = 60;
+    // camera.frameHeight = 60;
     camera.frameDistance = 50;
     camera.setFOV(PI/2.0); //90°
     // camera.setFOV(PI/3.0);
-    camera.lookAt(Vec3(45,25,-35), Vec3(0,0,0), Vec3(0,1,0));
+    camera.lookAt(Vec3(0,40,0), Vec3(0,-30,-100), Vec3(0,1,0));
 
     Scene scene = Scene(window, renderer, &camera, BACKGROUND_COLOR, AMBIENT_LIGHT);
     //Scene scene = Scene(window, &camera, BACKGROUND_COLOR, AMBIENT_LIGHT);
@@ -100,7 +100,7 @@ int main(int argv, char** args)
     // objCar->material.texture = texCar;
 
     WrappedMesh* objBlueFalcon = new WrappedMesh();
-    objBlueFalcon->loadFromFileObj("blue_falcon");
+    objBlueFalcon->loadFromFileObj("blue_falcon_fixed");
     objBlueFalcon->applyTransform(Transformations::scale(1,1,1));
     // objBlueFalcon->applyTransform(Transformations::rotateZAroundPoint(PI/3.0, Vec3(-20,0,0)));
     objBlueFalcon->recalculateBounds();
