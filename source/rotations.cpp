@@ -1,6 +1,14 @@
 #include "rotations.h"
 #include <cmath> 
 
+Mat4 Rotations::identity() {
+    Mat4 m = Mat4();
+    m.setColumn(0, Vec4(1, 0, 0, 0));
+    m.setColumn(1, Vec4(0, 1, 0, 0));
+    m.setColumn(2, Vec4(0, 0, 1, 0));
+    m.setColumn(3, Vec4(0, 0, 0, 1));
+}
+
 Mat4 Rotations::rotationX(double x) {
     Mat4 m = Mat4();
     m.setColumn(0, Vec4(1, 0, 0, 0));
@@ -126,6 +134,14 @@ Mat4 Rotations::shearZY(double lambda) {
     m.setColumn(3, Vec4( 0, 0, 0, 1));
 
     return m;
+}
+
+Mat4 Rotations::reflection(double x, double y, double z) {
+    Vec4 normal = Vec4(x, y, z, 0);
+
+    Mat4 m = normal.externalProduct(normal) * 2;
+
+    return this->identity() - m;
 }
 
 

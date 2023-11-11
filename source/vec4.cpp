@@ -1,4 +1,5 @@
 #include "vec4.h"
+#include "mat4.h"
 
 
 Vec4::Vec4(double x_in, double y_in, double z_in, double w_in) {
@@ -104,6 +105,28 @@ Vec4 Vec4::clampedPositive() {
     temp.w = w < 0 ? 0 : w;
     return temp;
 }
+
+Mat4 Vec4::externalProduct(Vec4& vector) {
+    Vec4 line_vector_x = (this->x * vector);
+    Vec4 line_vector_y = (this->y * vector);
+    Vec4 line_vector_z = (this->z * vector);
+    Vec4 line_vector_w = (this->w * vector);
+
+    Mat4 temp = Mat4();
+    temp.setColumn(0, line_vector_x);
+    temp.setColumn(1, line_vector_y);
+    temp.setColumn(2, line_vector_z);
+    temp.setColumn(3, line_vector_w);
+
+    return temp;
+}
+
+// Vec4::Vec4(const Vec4& source) {
+//     x = source.x;
+//     y = source.y;
+//     z = source.z;
+//     w = source.w;
+// };
 
 // double Vec4::dot(const Vec4& with) {
 //     return x*with.x + y*with.y + z*with.z + w*with.w;

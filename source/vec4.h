@@ -31,6 +31,7 @@ class Vec4 {
         // Vec3 a(const Vec3& with);
         // Vec3 projectOnto(Vec3& base);
         // Vec3 reflect(Vec3& normal);
+        Mat4 externalProduct(Vec4& vector);
         
 };
 

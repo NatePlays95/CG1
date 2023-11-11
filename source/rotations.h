@@ -18,6 +18,8 @@ class Rotations{
         Mat4 shearZX(double lambda);
         Mat4 shearYZ(double lambda);
         Mat4 shearZY(double lambda);
+        Mat4 reflection(double x, double y, double z);
+        Mat4 identity();
 
 };
 
