@@ -5,6 +5,7 @@
 #include "ray.h"
 #include "lighting/material.h"
 
+
 class Shape : public WorldObject {
     public:
         SDL_Color color;
@@ -13,6 +14,7 @@ class Shape : public WorldObject {
         Shape();
 
         virtual bool intersect(Ray& raycast) = 0; //abstract
+        virtual void printToConsole(); //abstract
 };
 
 #endif

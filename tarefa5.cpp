@@ -99,12 +99,12 @@ int main(int argv, char** args)
     // Texture* texDirt = new Texture("dirt");
     // objCube->material.texture = texDirt;
     WrappedMesh* objCube2 = new WrappedMesh();
-    objCube2->loadFromFileObj("cube");
-    objCube2->applyTransform(Transformations::rotateY(PI));
+    objCube2->loadFromFileObj("cube_uvtest");
+    // objCube2->applyTransform(Transformations::rotateY(PI));
     objCube2->applyTransform(Transformations::scale(20,20,20)); //arestas tem tamanho 2 por padrão
     objCube2->applyTransform(Transformations::translate(-50,-150+20,-165));
     objCube2->material = mat6;
-    Texture* texPresent = new Texture("present");
+    Texture* texPresent = new Texture("uv_test");
     objCube2->material.texture = texPresent;
 
     Sphere* sphere = new Sphere(Vec3(0,95,-200), 5);
@@ -112,15 +112,15 @@ int main(int argv, char** args)
 
 
     scene.addShape(ground);
-    scene.addShape(wallR);
-    scene.addShape(wallF);
-    scene.addShape(wallL); 
-    scene.addShape(ceiling);
-    scene.addShape(cylinder);
-    scene.addShape(cone);
+    // scene.addShape(wallR);
+    // scene.addShape(wallF);
+    // scene.addShape(wallL); 
+    // scene.addShape(ceiling);
+    // scene.addShape(cylinder);
+    // scene.addShape(cone);
     scene.addShape(objCube);
     scene.addShape(objCube2);
-    scene.addShape(sphere);
+    // scene.addShape(sphere);
 
     PointLight* lightP = new PointLight(Vec3(-100,140,-20), Vec3(0.7,0.7,0.7)*10000);
 

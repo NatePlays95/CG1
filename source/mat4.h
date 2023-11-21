@@ -1,7 +1,7 @@
 #ifndef MAT4_H
 #define MAT4_H
 
-#include <cmath>
+
 #include <array>
 #include "vec4.h"
 

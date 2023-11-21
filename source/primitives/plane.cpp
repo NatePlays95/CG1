@@ -1,11 +1,16 @@
-#include <cmath>
 #include "plane.h"
+#include <iostream>
+#include <cmath>
 
 Plane::Plane(){};
 
 Plane::Plane(Vec3 position_in, Vec3 normal_in) {
     position = position_in;
     normalDirection = normal_in.normalized();
+};
+
+void Plane::printToConsole() {
+    std::cout << "I'm a Plane object, normal " << normalDirection.toString() << std::endl;
 };
 
 bool Plane::intersect(Ray& raycast) {

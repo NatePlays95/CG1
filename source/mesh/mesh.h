@@ -36,8 +36,12 @@ struct Face { //all faces should be triangulated
 
 class Mesh : public Shape {
     public:
+        std::string meshName = "noName";
+
         Mesh();
         Mesh( vector<Vec3*>& vertices_in,  vector<Vec3*>& normals_in, vector<Vec3*>& uvs_in, vector<Face>& faces_in);
+
+        void printToConsole();
         bool intersect(Ray& raycast);
 
         // static Mesh loadFromFileObj(const std::string& fileName);

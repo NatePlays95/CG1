@@ -1,5 +1,5 @@
 #include "mat4.h"
-
+#include <cmath>
 
 Mat4::Mat4(){}
 

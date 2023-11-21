@@ -2,6 +2,7 @@
 #include "disk.h"
 #include "conebody.h"
 #include "../compositeshape.h"
+#include <iostream>
 
 Cone::Cone(Vec3 position_in, Vec3 direction_in, double radius_in, double height_in) {
     shapes = {};
@@ -11,6 +12,11 @@ Cone::Cone(Vec3 position_in, Vec3 direction_in, double radius_in, double height_
 
     addShape(body);
     addShape(lid);
+};
+
+void Cone::printToConsole() {
+    //CylinderBody* body = *(shapes[0]);
+    std::cout << "I'm a Cone object, position " << shapes.front()->position.toString() << std::endl;
 };
 
 void Cone::setColor(SDL_Color color_in) {

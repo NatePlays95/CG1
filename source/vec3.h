@@ -2,6 +2,8 @@
 #define VEC3_H
 
 #include <cmath>
+#include <string>
+// using namespace std;
 
 class Vec3 {
     public:
@@ -29,7 +31,7 @@ class Vec3 {
         Vec3 reflect(Vec3& normal);
 
         void output();
-        
+        std::string toString();
 };
 
 #endif

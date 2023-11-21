@@ -81,7 +81,7 @@ int main(int argv, char** args)
     blueFalcon->applyTransform(Transformations::rotateY(PI*1.04));
     blueFalcon->applyTransform(Transformations::rotateX(PI*0.2));
     blueFalcon->applyTransform(Transformations::translate(1300,154,1080));
-    // scene.addShape(blueFalcon);
+    scene.addShape(blueFalcon);
 
     SpotLight* lamp = new SpotLight(Vec3(1269,160,1082), Vec3(1,1,1)*50000000, Vec3(-1,-1,-0.3).normalized(), PI*0.4);
     scene.addLight(lamp);

@@ -57,7 +57,9 @@ int Scene::run() {
         SDL_RenderPresent(renderer);
     }
 
-
+    for (auto worker : renderWorkers) {
+        (*worker).join();
+    }
     return 0;
 };
 
@@ -77,6 +79,9 @@ void Scene::handleInput() {
         else if (event.type == SDL_MOUSEBUTTONDOWN) {
             mouseLeftPressed = true;
             mouseLastX = event.button.x; mouseLastY = event.button.y;
+            if (shiftPressed) {
+                pick(mouseLastX, mouseLastY);
+            }
         }
         else if (event.type == SDL_MOUSEBUTTONUP) {
             mouseLeftPressed = false;
@@ -125,6 +130,9 @@ void Scene::handleInput() {
                 case SDLK_e:
                     downPressed = true;
                     break;
+                case SDLK_LSHIFT:
+                    shiftPressed = true;
+                    break;
                 case SDLK_o:
                     canvasColumns = min(canvasColumns+50, 500);
                     break;
@@ -169,6 +177,9 @@ void Scene::handleInput() {
                     break;
                 case SDLK_RIGHT:
                     rightPressed = false;
+                    break;
+                case SDLK_LSHIFT:
+                    shiftPressed = false;
                     break;
                 case SDLK_d:
                     rightPressed = false;
@@ -230,7 +241,7 @@ void Scene::updateCameraRotation(int mouseX, int mouseY) {
     double deltaY = (mouseY-mouseLastY)*mouseSensitivity/100.0;
 
     //look left/right: rotate around world Y axis
-    camera.target = (Transformations::rotateYAroundPoint(deltaX, camera.position) * Vec4(camera.target)).to3();
+    camera.target = (Transformations::rotateYAroundPoint(-deltaX, camera.position) * Vec4(camera.target)).to3();
 
     // Vec3 moveVec = Vec3(-deltaX, deltaY, 0.0)*mouseSensitivity; //should we multiply with cameraToWorld?
     camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
@@ -291,7 +302,7 @@ void Scene::paintCanvasNewThread() {
     renderWorkersFinished = std::vector<bool>(1, false);;
 
     std::thread* myThread = new std::thread([this]() {
-        while(true) {
+        while(this->isRunning) {
             for (int l = 0; l < canvasLines; l++){
                 for (int c = 0; c < canvasColumns; c++){
                     paintPixel(l, c);
@@ -452,6 +463,7 @@ void Scene::drawCanvasToWindow(std::vector<std::vector<SDL_Color>> * canvas_in) 
     
     for (int l = 0; l < canvasLines; l++) {
         for (int c = 0; c < canvasColumns; c++) {
+            // SDL_Color currentColor = canvas[l][canvasColumns-1-c];
             SDL_Color currentColor = canvas[l][c];
             SDL_SetRenderDrawColor(renderer, currentColor.r, currentColor.g, currentColor.b, currentColor.a);
 
@@ -463,6 +475,41 @@ void Scene::drawCanvasToWindow(std::vector<std::vector<SDL_Color>> * canvas_in) 
     }
 };
 
+void Scene::pick(int mouseX, int mouseY) {
+    // int l = mouseY * canvasLines / SDL_GetWindowSurface(window)->h;
+    // int c = mouseX * canvasColumns / SDL_GetWindowSurface(window)->w;
+    double dx = camera.frameWidth / canvasColumns;
+    double dy = camera.frameHeight / canvasLines;
+    double ddx = mouseX * camera.frameWidth / 1000.0;
+    double ddy = mouseY * camera.frameHeight / 1000.0;
+    //l = mouseX / 1000; c = mouseY / 1000;
+    double frameY = camera.frameHeight/2 - dy/2 - ddy;
+    double frameX = -camera.frameWidth/2 + dx/2 + ddx;
+    // double frameX = camera.frameWidth/2 - dx/2 - ddx;
+    Shape* hitShape = nullptr;
+    bool hitSomething = false;
+    Ray raycast = Ray(camera.position);
+
+    //TODO: swap to using matrices.
+    Vec3 targetScreenPos = camera.position;
+    targetScreenPos = targetScreenPos + camera.k * -camera.frameDistance;
+    targetScreenPos = targetScreenPos + camera.i * frameX;
+    targetScreenPos = targetScreenPos + camera.j * frameY;
+
+    raycast.pointTowards(targetScreenPos);
+
+    for (auto obj : shapesList) {
+        if (obj->intersect(raycast)) {
+            hitSomething = true;
+            hitShape = obj;
+        }
+    }
+
+    cout << "- Pick at X:" << mouseX << " Y:" << mouseY << " hit distance " << raycast.t << endl;
+    if (hitSomething) hitShape->printToConsole();
+    cout << endl;
+};
+
 
 void Scene::addLight(Light * light_in) {
     lightsList.push_front(light_in);
@@ -472,6 +519,3 @@ void Scene::addLight(Light * light_in) {
 void Scene::addShape(Shape * shape_in) {
     shapesList.push_front(shape_in);
 };
-
-
-

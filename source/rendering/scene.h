@@ -53,6 +53,8 @@ class Scene {
         bool leftPressed = false;
         bool rightPressed = false;
 
+        bool shiftPressed = false;
+
         //Scene(SDL_Window * window_in, Camera * camera_in, SDL_Color background={100,100,100,255}, Vec3 ambientLight=Vec3(0.2,0.2,0.2));
         Scene(SDL_Window * window_in, SDL_Renderer * renderer_in, Camera * camera_in, SDL_Color background={100,100,100,255}, Vec3 ambientLight=Vec3(0.2,0.2,0.2));
         ~Scene(); 
@@ -71,6 +73,8 @@ class Scene {
         void paintQuadrant(int startL, int endL, int startC, int endC);
         void paintPixel(int l, int c);
         void drawCanvasToWindow(std::vector<std::vector<SDL_Color>> * canvas_in);
+
+        void pick(int mouseX, int mouseY);
 
         void addLight(Light * light_in);
         void addShape(Shape * shape_in);

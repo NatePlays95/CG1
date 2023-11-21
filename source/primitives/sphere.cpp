@@ -1,12 +1,17 @@
 #include <cmath>
 #include <utility>
 #include "sphere.h"
+#include <iostream>
 
 Sphere::Sphere(){};
 
 Sphere::Sphere(Vec3 position_in, double radius_in) {
     position = position_in;
     radius = radius_in;
+};
+
+void Sphere::printToConsole() {
+    std::cout << "I'm a Sphere object, position " << position.toString() << " radius " << radius << std::endl;
 };
 
 bool Sphere::intersect(Ray& raycast) {

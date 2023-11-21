@@ -11,6 +11,8 @@ class Sphere : public Shape {
         Sphere();
         Sphere(Vec3 position_in, double radius_in);
 
+        void printToConsole();
+
         bool intersect(Ray& raycast);
 };
 

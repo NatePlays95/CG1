@@ -45,6 +45,7 @@ void Texture::loadImageBMP (const std::string path) {
 
 SDL_Color Texture::getColorAtUV (Vec3 uvVec) {
     uvVec.y = 1.0 - uvVec.y;
+    // uvVec.x = 1.0 - uvVec.x;
 
     //texture should tile
     uvVec.x -= floor(uvVec.x);

@@ -14,6 +14,11 @@ Mesh::Mesh(vector<Vec3*>& vertices_in, vector<Vec3*>& normals_in, vector<Vec3*>&
     faces = faces_in;
 };
 
+void Mesh::printToConsole() {
+    //CylinderBody* body = *(shapes[0]);
+    std::cout << "I'm a Mesh object," << " model name \"" << meshName <<  "\".obj" << std::endl;
+};
+
 bool Mesh::intersect(Ray& raycast) {
     bool result = false;
     for (auto face : faces) {
@@ -56,6 +61,7 @@ bool Mesh::intersectFace(Face& face, Ray& raycast) {
     Vec3 vt2 = *(uvs[face.uvIndices[1]]);
     Vec3 vt3 = *(uvs[face.uvIndices[2]]);
     Vec3 uv = vt1*c3 + vt2*c1 + vt3*c2;
+    // Vec3 uv = vt1*c2 + vt2*c3 + vt3*c1;
     
 
     Vec3 normal = plane_normal; //TODO: interpolate normals
@@ -186,6 +192,8 @@ void Mesh::loadFromFileObj(const std::string& fileName) {
     vector<Vec3*> normals_in;
     vector<Vec3*> uvs_in;
     vector<Face> faces_in;
+
+    meshName = fileName;
 
     string line;
     while (getline(objFile, line)) {

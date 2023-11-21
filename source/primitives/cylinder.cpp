@@ -2,6 +2,7 @@
 #include "disk.h"
 #include "cylinderbody.h"
 #include "../compositeshape.h"
+#include <iostream>
 
 Cylinder::Cylinder(Vec3 position_in, Vec3 direction_in, double radius_in, double height_in) {
     shapes = {};
@@ -13,6 +14,11 @@ Cylinder::Cylinder(Vec3 position_in, Vec3 direction_in, double radius_in, double
     addShape(body);
     addShape(lidTop);
     addShape(lidBottom);
+};
+
+void Cylinder::printToConsole() {
+    //CylinderBody* body = *(shapes[0]);
+    std::cout << "I'm a Cylinder object, position " << shapes.front()->position.toString() << std::endl;
 };
 
 void Cylinder::setColor(SDL_Color color_in) {

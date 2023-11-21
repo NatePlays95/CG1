@@ -1,5 +1,7 @@
 #include "vec3.h"
 #include <iostream>
+// #include <format>
+#include <string>
 
 
 Vec3::Vec3(double x_in, double y_in, double z_in) {
@@ -128,4 +130,9 @@ Vec3 Vec3::reflect(Vec3& normal) {
 
 void Vec3::output() {
     std::cout << "[" << this->x << "; " << this->y << "; " << this->z << "]" << std::endl;
-}
+};
+
+std::string Vec3::toString() {
+    // return std::format("[{}, {}, {}]", x, y, z);
+    return "[" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + "]";
+};
