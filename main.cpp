@@ -134,6 +134,6 @@ int main(int argv, char** args)
     // scene.addShape(cone2);
 
     scene.run();
-
+    //delete &scene;
     return 0;
 }

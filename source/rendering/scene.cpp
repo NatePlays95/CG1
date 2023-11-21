@@ -49,7 +49,7 @@ int Scene::run() {
         render();
             time(&end);
             double time_taken = double(end-start);
-            cout << "time taken for render: " << time_taken << "s" << endl;
+            // cout << "time taken for render: " << time_taken << "s" << endl;
 
         
         ImGui::Render();
@@ -137,6 +137,13 @@ void Scene::handleInput() {
                 case SDLK_k:
                     canvasLines = max(canvasLines-50, 50);
                     break;
+                case SDLK_r:
+                    if (canvasLines >= 500 && canvasColumns >= 500) {
+                        canvasLines = 50; canvasColumns = 50;
+                    } else {
+                        canvasLines = 500; canvasColumns = 500;
+                    }
+                    break;
             }
         } 
         else if (event.type == SDL_KEYUP) {
@@ -219,15 +226,18 @@ void Scene::handleInput() {
 void Scene::updateCameraRotation(int mouseX, int mouseY) {
     double mouseSensitivity = 0.3;
  
-    double deltaX = (mouseX-mouseLastX)*mouseSensitivity;
-    double deltaY = (mouseY-mouseLastY)*mouseSensitivity; 
+    double deltaX = (mouseX-mouseLastX)*mouseSensitivity/100.0;
+    double deltaY = (mouseY-mouseLastY)*mouseSensitivity/100.0;
 
     //look left/right: rotate around world Y axis
-    camera.target = (Transformations::rotateYAroundPoint(deltaX/100.0, camera.position) * Vec4(camera.target)).to3();
-    
-    //look up/down: rotate around camera J axis
+    camera.target = (Transformations::rotateYAroundPoint(deltaX, camera.position) * Vec4(camera.target)).to3();
 
     // Vec3 moveVec = Vec3(-deltaX, deltaY, 0.0)*mouseSensitivity; //should we multiply with cameraToWorld?
+    camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
+
+    //look up/down: rotate around camera J axis
+    camera.target = (Transformations::rotateAroundAxis(deltaY, camera.i, camera.position) * Vec4(camera.target)).to3();
+
     camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
 
     mouseLastX = mouseX; mouseLastY = mouseY;

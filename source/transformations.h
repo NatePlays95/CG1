@@ -23,6 +23,8 @@ class Transformations{
         static Mat4 rotateYAroundPoint(double angleRadians, Vec3 center);
         static Mat4 rotateZAroundPoint(double angleRadians, Vec3 center);
         static Mat4 scaleAroundPoint(double sx, double sy, double sz, Vec3 center);
+
+        static Mat4 rotateAroundAxis(double angleRadians, Vec3 normalizedAxis, Vec3 center);
 };
 
 #endif

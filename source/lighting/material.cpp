@@ -7,6 +7,7 @@ Material::Material(Vec3 ambient_in, Vec3 roughness_in, Vec3 specular_in, double 
     specular = specular_in;
     roughness = roughness_in;
     hardness = hardness_in;
+    texture = nullptr;
 };
 
 Vec3 Material::getDiffuseAtUV(SDL_Renderer* renderer, Vec3 uvVec) {

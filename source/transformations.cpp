@@ -144,3 +144,19 @@ Mat4 Transformations::scaleAroundPoint(double sx, double sy, double sz, Vec3 cen
     double x = center.x, y = center.y, z = center.z;
     return translate(x, y, z) * scale(sx, sy, sz) * translate(-x, -y, -z);
 };
+
+Mat4 Transformations::rotateAroundAxis(double angleRadians, Vec3 normalizedAxis, Vec3 center){
+    double a = angleRadians; double sina = sin(a); double cosa = cos(a); double oppcos = 1 - cos(a);
+    double ux = normalizedAxis.x; double uy = normalizedAxis.y; double uz = normalizedAxis.z;
+
+    Mat4 rot = Mat4();
+    rot.setLine(0, Vec4(cosa + ux*ux*oppcos, ux*uy*oppcos - uz*sina, ux*uz*oppcos + uy*sina, 0));
+    rot.setLine(1, Vec4(uy*ux*oppcos + uz*sina, cosa + uy*uy*oppcos, uy*uz*oppcos - ux*sina, 0));
+    rot.setLine(2, Vec4(uz*ux*oppcos - uy*sina, uz*uy*oppcos + ux*sina, cosa + uz*uz*oppcos, 0));
+    rot.setLine(3, Vec4(0,0,0,1));
+
+    Mat4 trans = translate(center.x, center.y, center.z);
+    Mat4 invtrans = translate(-center.x, -center.y, -center.z);
+
+    return trans * rot * invtrans;
+};

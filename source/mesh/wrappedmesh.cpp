@@ -35,7 +35,15 @@ bool WrappedMesh::intersectBounds(Ray& raycast) {
 };
 
 void WrappedMesh::applyTransform(Mat4 transform) {
-    Mesh::applyTransform(transform);
+    vector<Vec3*> new_vertices;
+    for (auto vertex : vertices) {
+        Vec4 vec4 = Vec4(*vertex, 1);
+        new_vertices.push_back(new Vec3((transform * vec4).to3()));
+    }
+    int a = 1;
+    // delete vertices;
+    vertices = new_vertices;
+    cout << "aaa" << "\n";
     recalculateBounds();
 };
 
