@@ -39,20 +39,23 @@ int main(int argv, char** args)
     ImGuiSDL::Initialize(renderer, WINDOW_WIDTH, WINDOW_HEIGHT);
     // ImGui_ImplSDL2_NewFrame();
 
-    SDL_Color BACKGROUND_COLOR = {150,255,255,255};
-    Vec3 AMBIENT_LIGHT = Vec3(0.4,0.4,0.6);
+    SDL_Color BACKGROUND_COLOR = {200,230,255,255};
+    Vec3 AMBIENT_LIGHT = Vec3(0.4,0.6,0.7);
 
     Camera camera;
     camera.frameWidth = 60;
     camera.frameHeight = 60;
     camera.frameDistance = 50;
-    camera.setFOV(PI/2.0); //90°
-    // camera.setFOV(PI/3.0);
+    // Zoom
+    // camera.setFOV(PI/2.0 + PI/4.0); //135°
+    // camera.setFOV(PI/2.0); //90°
+    camera.setFOV(PI/3.0); //60°
     camera.lookAt(Vec3(1164,181,1038), Vec3(1164,181,1038)+Vec3(1,-0.5,1).normalized(), Vec3(0,1,0));
 
     Scene scene = Scene(window, renderer, &camera, BACKGROUND_COLOR, AMBIENT_LIGHT);
 
     Material city1 = Material(Vec3(0.95,1,1), Vec3(0.95,1,1)*0.8, Vec3(1,1,1)*0.6, 10);
+    Material city2 = Material(Vec3(0.95,1,0.9)*0.6, Vec3(0.95,1,0.9)*0.4, Vec3(0.9,0.9,1)*0.6, 100);
 
 
 
@@ -65,14 +68,39 @@ int main(int argv, char** args)
     road->setMaterial(Material(Vec3(0.4,0.2,0.7), Vec3(0.4,0.2,0.7), Vec3(1,1,1)*0.1, 10));
     scene.addShape(road);
 
-    Sphere* towerBase = new Sphere(Vec3(1500,50,1600), 100);
+    Cylinder* building1 = new Cylinder(Vec3(1700,120,1800), Vec3(0,1,0), 60, 200);
+    building1->setMaterial(city2);
+    scene.addShape(building1);
+    Cylinder* building2 = new Cylinder(Vec3(1500,150,1900), Vec3(0,1,0), 60, 240);
+    building2->setMaterial(city1);
+    scene.addShape(building2);
+    Cylinder* building3 = new Cylinder(Vec3(1220,150,1800), Vec3(0,1,0), 80, 200);
+    building3->setMaterial(city2);
+    scene.addShape(building3);
+    Cylinder* building4 = new Cylinder(Vec3(1850,100,1400), Vec3(0,1,0), 130, 150);
+    building4->setMaterial(city1);
+    scene.addShape(building4);
+
+    Sphere* towerBase = new Sphere(Vec3(1500,50,1500), 100);
     towerBase->material = city1;
-    Cone* towerBody = new Cone(Vec3(1500,120,1600), Vec3(0,1,0), 40, 200);
+    Cone* towerBody = new Cone(Vec3(1500,120,1500), Vec3(0,1,0), 40, 200);
     towerBody->setMaterial(city1);
     CompositeShape* tower = new CompositeShape();
+    tower->name = "tower";
     tower->addShape(towerBase);
     tower->addShape(towerBody);
     scene.addShape(tower);
+
+    Sphere* tower2bot = new Sphere(Vec3(1900, 250, 1700), 70);
+    Sphere* tower2top = new Sphere(Vec3(1900, 330, 1700), 70);
+    Cylinder* tower2base = new Cylinder(Vec3(1900, 150, 1700), Vec3(0,1,0), 50, 100);
+    tower2base->setMaterial(city2);
+    CompositeShape* tower2 = new CompositeShape();
+    tower2->name = "tower2";
+    tower2->addShape(tower2base); tower2->addShape(tower2bot); tower2->addShape(tower2top);
+    tower2->setMaterial(city2);
+    scene.addShape(tower2);
+
 
     WrappedMesh* blueFalcon = new WrappedMesh();
     blueFalcon->loadFromFileObj("blue_falcon_fixed");

@@ -1,4 +1,5 @@
 #include "compositeshape.h"
+#include <iostream>
 
 CompositeShape::CompositeShape() {
     shapes = {};
@@ -6,6 +7,10 @@ CompositeShape::CompositeShape() {
 
 void CompositeShape::addShape(Shape* shape_in) {
     shapes.push_front(shape_in);
+};
+
+void CompositeShape::printToConsole() {
+    std::cout << "I'm a CompositeShape object, named " << name << std::endl;
 };
 
 bool CompositeShape::intersect(Ray& raycast) {
@@ -23,4 +28,10 @@ bool CompositeShape::intersect(Ray& raycast) {
     }
 
     return result;
+};
+
+void CompositeShape::setMaterial(Material material_in) {
+    for (auto shape : shapes) {
+        shape->material = material_in;
+    }
 };

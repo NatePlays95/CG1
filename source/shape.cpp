@@ -8,3 +8,4 @@ Shape::Shape(){};
 void Shape::printToConsole() {
     std::cout << "I'm a base Shape object." << std::endl;
 };
+

@@ -20,8 +20,7 @@ Mat4 Camera::lookAt(Vec3 eye, Vec3 at, Vec3 up_direction) {
     // J = (K.cross(I)).normalized();
 
     // i = I; j = J; k = K;
-
-    explanation:
+    
     Vec3 forward, up, right;
     forward = (eye - at).normalized();
     right = (up_direction.cross(forward)).normalized();

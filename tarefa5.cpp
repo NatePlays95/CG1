@@ -45,9 +45,9 @@ int main(int argv, char** args)
     camera.frameWidth = 60;
     camera.frameHeight = 60;
     camera.frameDistance = 50;
-    camera.setFOV(PI/2.0); //90°
+    camera.setFOV(2.0*PI/3.0); //120°
     // camera.setFOV(PI/3.0);
-    camera.lookAt(Vec3(0,0,0), Vec3(0,-30,-100), Vec3(0,1,0));
+    camera.lookAt(Vec3(0,0,0), Vec3(0,-50,-100), Vec3(0,1,0));
 
     Scene scene = Scene(window, renderer, &camera, BACKGROUND_COLOR, AMBIENT_LIGHT);
 
@@ -94,7 +94,7 @@ int main(int argv, char** args)
     WrappedMesh* objCube = new WrappedMesh();
     objCube->loadFromFileObj("cube");
     objCube->applyTransform(Transformations::scale(20,20,20)); //arestas tem tamanho 2 por padrão
-    objCube->applyTransform(Transformations::translate(0,-150+20,-165));
+    objCube->applyTransform(Transformations::translate(30,-150+20,-165));
     objCube->material = mat6;
     // Texture* texDirt = new Texture("dirt");
     // objCube->material.texture = texDirt;
@@ -102,7 +102,7 @@ int main(int argv, char** args)
     objCube2->loadFromFileObj("cube_uvtest");
     // objCube2->applyTransform(Transformations::rotateY(PI));
     objCube2->applyTransform(Transformations::scale(20,20,20)); //arestas tem tamanho 2 por padrão
-    objCube2->applyTransform(Transformations::translate(-50,-150+20,-165));
+    objCube2->applyTransform(Transformations::translate(-30,-150+20,-165));
     objCube2->material = mat6;
     Texture* texPresent = new Texture("uv_test");
     objCube2->material.texture = texPresent;

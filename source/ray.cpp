@@ -54,6 +54,7 @@ bool Ray::updateT(double new_t, Vec3 new_normal, Material new_material) {
     if (new_t >= t) return false;
 
     t = new_t;
+    contact_position = contactPosition();
     contact_normal = new_normal;
     contact_material = new_material;
     contact_uv = Vec3(0,0,0);
@@ -65,6 +66,7 @@ bool Ray::updateT(double new_t, Vec3 new_normal, Material new_material, Vec3 uv)
     if (new_t >= t) return false;
 
     t = new_t;
+    contact_position = contactPosition();
     contact_normal = new_normal;
     contact_material = new_material;
     contact_uv = uv;

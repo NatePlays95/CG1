@@ -241,7 +241,7 @@ void Scene::updateCameraRotation(int mouseX, int mouseY) {
     double deltaY = (mouseY-mouseLastY)*mouseSensitivity/100.0;
 
     //look left/right: rotate around world Y axis
-    camera.target = (Transformations::rotateYAroundPoint(-deltaX, camera.position) * Vec4(camera.target)).to3();
+    camera.target = (Transformations::rotateYAroundPoint(deltaX, camera.position) * Vec4(camera.target)).to3();
 
     // Vec3 moveVec = Vec3(-deltaX, deltaY, 0.0)*mouseSensitivity; //should we multiply with cameraToWorld?
     camera.lookAt(camera.position, camera.target, Vec3(0,1,0));
@@ -411,23 +411,7 @@ SDL_Color Scene::getLightColorAt(Ray& raycast) {
 
         //test for shadows
         double margin = 0.0001;
-
-        // Ray shadowRaycast = Ray(light->position, l*(-1));
-        // bool raycastHit = false;
-        // bool isShadow = false;
-        // double renderContactDistance = light->getIncidenceDistance(raycast.contactPosition());
-        // for (auto obj : shapesList) {
-        //     raycastHit = obj->intersect(shadowRaycast) || raycastHit;       
-        //     // if (shadowRaycast.t < margin) {//hits ray origin point
-        //     //     raycastHit = false;
-        //     //     continue;
-        //     // }; 
-        //     if (raycastHit && shadowRaycast.t+margin < renderContactDistance){ //sombra
-        //         isShadow = true;
-        //         break;
-        //     }
-        // }
-
+        
         Ray shadowRaycast = Ray(raycast.contactPosition() + l*margin, l);
         // Ray shadowRaycast = Ray(raycast.contactPosition(), l);
         bool raycastHit = false;

@@ -5,7 +5,6 @@
 #include "ray.h"
 #include "lighting/material.h"
 
-
 class Shape : public WorldObject {
     public:
         SDL_Color color;
